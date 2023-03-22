@@ -1,12 +1,13 @@
 // ** MUI Imports
 import { Button, Card, Hidden, Box, Stack, ButtonGroup, Divider } from '@mui/material'
 import Grid from '@mui/material/Grid'
-import Header from './coponents/Header'
+
+
 
 import { useState } from 'react'
+import ThirdPage from '../third-page'
+import Header from './components/Header'
 
-import TalentPoolFull from './coponents/TalentPool'
-import CandidatesFull from './coponents/CandidatesFull'
 
 
 
@@ -15,7 +16,7 @@ const Home = () => {
 
   return (
     <Grid container spacing={6}>
-      <Header />
+      {/* <Header />
 
       <Grid item xs={12}
         sx={{
@@ -31,12 +32,13 @@ const Home = () => {
           <Button onClick={() => setActive("Details")}>Details</Button>
         </ButtonGroup>
       </Grid>
-      <Divider />
-      <Grid container xs={12}>
+      <Divider /> */}
+      <ThirdPage />
+      {/* <Grid container>
         {active === "TalentPool" && <TalentPoolFull />}
         {active === "Candidates" && <CandidatesFull />}
 
-      </Grid>
+      </Grid> */}
 
     </Grid>
   )

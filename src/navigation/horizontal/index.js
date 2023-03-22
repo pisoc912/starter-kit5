@@ -10,6 +10,12 @@ const navigation = () => [
     icon: 'mdi:email-outline',
   },
   {
+    title: 'Third Page',
+    path: '/third-page',
+    icon: 'mdi:email-outline',
+  },
+
+  {
     path: '/acl',
     action: 'read',
     subject: 'acl-page',

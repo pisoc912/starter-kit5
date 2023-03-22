@@ -9,6 +9,10 @@ const navigation = () => {
       title: 'Second Page',
       path: '/second-page',
       icon: 'mdi:email-outline',
+    }, {
+      title: 'Third Page',
+      path: '/third-page',
+      icon: 'mdi:email-outline',
     },
     {
       path: '/acl',

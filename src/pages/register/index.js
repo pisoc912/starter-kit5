@@ -42,15 +42,18 @@ import { useRouter } from 'next/router'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
-import { API, Auth } from 'aws-amplify'
-import { createUser } from 'src/graphql/mutations'
+import { API, Auth, graphqlOperation } from 'aws-amplify'
+import { createUser, createAccount } from 'src/graphql/mutations'
+
+import { ulid } from 'ulid';
 
 
 const defaultValues = {
-  email: "",
-  username: "",
-  password: "",
-  terms: false
+  Email: "",
+  Username: "",
+  Password: "",
+  Company: "",
+  Terms: false
 }
 
 // ** Styled Components
@@ -112,9 +115,10 @@ const Register = () => {
   const theme = useTheme()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
-  const [username, setUserName] = useState("")
+  const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
-  const [password, setPassWord] = useState("")
+  const [companyName, setCompanyName] = useState("")
+  const [password, setPassword] = useState("")
   const router = useRouter()
 
 
@@ -125,6 +129,7 @@ const Register = () => {
     password: yup.string().min(5).required(),
     username: yup.string().min(3).required(),
     email: yup.string().email().required(),
+    company: yup.string().matches(/^[a-z0-9]+$/).required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms')
   })
 
@@ -139,8 +144,11 @@ const Register = () => {
   });
   console.log(errors)
 
-  const onSubmit = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const id = ulid();
+
     try {
       const { user } = await Auth.signUp({
         username,
@@ -149,19 +157,31 @@ const Register = () => {
           email
         }
       });
-      console.log(user);
-      await API.graphql({
-        query: createUser,
-        variables: {
-          input: {
-            username: event.target.username.value,
-            email: event.target.email.value
-          }
-        }
-      })
+
+
+      const { data: userData } = await API.graphql(graphqlOperation(createUser, {
+        input: {
+          PK: `USER#${id}`,
+          SK: `USER#${id}`,
+          email: email,
+          created_at: new Date().toISOString(),
+          account_pk: `ACCT#${id}`
+        },
+      }));
+      console.log('User created:', userData.createUser);
+
+      const { data: accountData } = await API.graphql(graphqlOperation(createAccount, {
+        input: {
+          PK: userData.createUser.account_pk,
+          SK: userData.createUser.account_pk, // generate a new ULID
+          company_name: companyName,
+          created_at: new Date().toISOString(),
+        },
+      }));
+      console.log('Account created:', accountData.createAccount);
       router.push('/login')
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      console.error('Error registering user:', error);
     }
   };
 
@@ -280,7 +300,7 @@ const Register = () => {
               <TypographyStyled variant='h5'>Adventure starts here 🚀</TypographyStyled>
               <Typography variant='body2'>Make your app management easy and fun!</Typography>
             </Box>
-            <form noValidate autoComplete='off' onSubmit={onSubmit}>
+            <form noValidate autoComplete='off' onSubmit={handleSubmit}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name='Username'
@@ -292,7 +312,7 @@ const Register = () => {
                       value={username}
                       onBlur={onBlur}
                       label='Username'
-                      onChange={(event) => setUserName(event.target.value)}
+                      onChange={(e) => setUsername(e.target.value)}
                       placeholder='johndoe'
                       error={Boolean(errors.username)}
                     />
@@ -312,13 +332,35 @@ const Register = () => {
                       value={email}
                       label='Email'
                       onBlur={onBlur}
-                      onChange={(event) => setEmail(event.target.value)}
+                      onChange={e => setEmail(e.target.value)
+                      }
                       error={Boolean(errors.email)}
                       placeholder='user@email.com'
                     />
                   )}
                 />
                 {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name='Company'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      autoFocus
+                      value={companyName}
+                      onBlur={onBlur}
+                      label='Company Name'
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder=''
+                      error={Boolean(errors.company)}
+                    />
+                  )}
+                />
+                {errors.company && (
+                  <FormHelperText sx={{ color: 'error.main' }}>{errors.company.message}</FormHelperText>
+                )}
               </FormControl>
               <FormControl fullWidth>
                 <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
@@ -333,7 +375,7 @@ const Register = () => {
                       value={password}
                       label='Password'
                       onBlur={onBlur}
-                      onChange={event => setPassWord(event.target.value)}
+                      onChange={(e) => setPassword(e.target.value)}
                       id='auth-login-v2-password'
                       error={Boolean(errors.password)}
                       type={showPassword ? 'text' : 'password'}
@@ -355,6 +397,8 @@ const Register = () => {
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.password.message}</FormHelperText>
                 )}
               </FormControl>
+
+
 
               <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
                 <Controller

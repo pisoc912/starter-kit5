@@ -1,28 +1,75 @@
-// ** MUI Imports
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
+import { useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
 
-const SecondPage = () => {
+
+
+
+let stripePromise;
+
+const getStripe = () => {
+  if (!stripePromise) {
+    stripePromise = loadStripe("pk_test_51MeV74FbNTGaIf1Z315ReJ41QcUrNeGkknXOdfljWDRQV6zIfFLjqwS4nGQTWp56JF57Zsg5b4yJmDC8FtkhVRfq00USVRMSSp");
+  }
+  console.log(stripePromise)
+
+  return stripePromise;
+};
+
+const Checkout = () => {
+  const [stripeError, setStripeError] = useState(null);
+  const [isLoading, setLoading] = useState(false);
+
+  const item = {
+    price: "price_1MoAVTFbNTGaIf1ZTDEekkvn",
+    quantity: 1
+  };
+
+  const checkoutOptions = {
+    lineItems: [item],
+    mode: "subscription",
+    successUrl: `${window.location.origin}/success`,
+    cancelUrl: `${window.location.origin}/cancel`
+
+  };
+
+  const redirectToCheckout = async () => {
+    setLoading(true);
+    console.log("redirectToCheckout");
+
+    const stripe = await getStripe();
+    const { error } = await stripe.redirectToCheckout(checkoutOptions);
+    console.log("Stripe checkout error", error);
+
+    if (error) setStripeError(error.message);
+    setLoading(false);
+  };
+
+  if (stripeError) alert(stripeError);
+
   return (
-    <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <Card>
-          <CardHeader title='Create Awesome 🙌'></CardHeader>
-          <CardContent>
-            <Typography sx={{ mb: 2 }}>This is your second page.</Typography>
-            <Typography>
-              Chocolate sesame snaps pie carrot cake pastry pie lollipop muffin.
-              Carrot cake dragée chupa chups jujubes. Macaroon liquorice cookie
-              wafer tart marzipan bonbon. Gingerbread jelly-o dragée chocolate.
-            </Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
-  )
-}
+    <div className="checkout">
+      <h1>Stripe Checkout</h1>
+      <p className="checkout-title">Design+Code React Hooks Course</p>
+      <p className="checkout-description">
+        Learn how to build a website with React Hooks
+      </p>
+      <h1 className="checkout-price">$19/month Diamond</h1>
+      <button
+        className="checkout-button"
+        onClick={redirectToCheckout}
+        disabled={isLoading}
+      >
+        {/* <div className="grey-circle">
+          <div className="purple-circle">
+            <img className="icon" src={CardIcon} alt="credit-card-icon" />
+          </div>
+        </div> */}
+        <div className="text-container">
+          <p className="text">{isLoading ? "Loading..." : "Buy"}</p>
+        </div>
+      </button>
+    </div>
+  );
+};
 
-export default SecondPage
+export default Checkout;

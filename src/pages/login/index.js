@@ -43,9 +43,11 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
-import { API, Auth } from 'aws-amplify'
+import { API, Auth, graphqlOperation } from 'aws-amplify'
 import { createUser } from 'src/graphql/mutations'
 import { useRouter } from 'next/router'
+
+import { ulid } from 'ulid';
 
 // ** Styled Components
 const LoginIllustrationWrapper = styled(Box)(({ theme }) => ({
@@ -135,33 +137,90 @@ const LoginPage = () => {
     resolver: yupResolver(schema)
   })
 
+  // const onSubmit = async () => {
+  //   try {
+  //     Auth.signIn(email, password).then(res => {
+  //       console.log(res)
+  //       const prefix = res.keyPrefix
+  //       const userName = res.username
+
+  //       var newUser = {
+  //         role: 'admin',
+  //         password: '',
+  //         fullName: res.attributes.email,
+  //         username: res.username,
+  //         email: res.attributes.email,
+  //         jwtToken: res.storage[prefix + '.' + userName + ".accessToken"]
+  //       }
+  //       console.log(newUser)
+  //       auth.setUser(newUser)
+  //       window.localStorage.setItem('userData', JSON.stringify(res))
+  //       window.localStorage.setItem('CognitoAccessToken', newUser.jwtToken);
+
+  //       const { data: AccUserData } = await API.graphql(graphqlOperation(createUser, {
+  //         input: {
+  //           PK: `ACCT#${id}`,
+  //           SK: `USER#${id}`,
+  //           email: email,
+  //           created_at: new Date().toISOString(),
+  //           account_pk: `ACCT#${id}`
+  //         },
+  //       }));
+  //       console.log('User created:', userData.createUser);
+  //       router.push('./home')
+  //     })
+  //   } catch (error) {
+  //     console.log(error)
+  //     setError("Incorrect email or password")
+  //   }
+  // }
+
   const onSubmit = async () => {
+    const id = ulid();
     try {
-      Auth.signIn(email, password).then(res => {
-        console.log(res)
-        const prefix = res.keyPrefix
-        const userName = res.username
+      const res = await Auth.signIn(email, password);
+      console.log(res);
+      const prefix = res.keyPrefix;
+      const userName = res.username;
 
-        var newUser = {
-          role: 'admin',
-          password: '',
-          fullName: res.attributes.email,
-          username: res.username,
-          email: res.attributes.email,
-          jwtToken: res.storage[prefix + userName + ".accessToken"]
-        }
-        console.log(newUser)
-        auth.setUser(newUser)
+      var newUser = {
+        role: 'admin',
+        password: '',
+        fullName: res.attributes.email,
+        username: res.username,
+        email: res.attributes.email,
+        jwtToken: res.storage[prefix + '.' + userName + ".accessToken"]
+      }
+      console.log(newUser);
+      auth.setUser(newUser);
 
+      // Get the user's session and set it in state or storage
+      // const session = await Auth.currentSession();
+      // const accessToken = session.getAccessToken().getJwtToken();
+      // const idToken = session.getIdToken().getJwtToken();
+      // console.log(session);
+      // auth.setSession({ accessToken, idToken });
 
-        window.localStorage.setItem('userData', JSON.stringify(res))
-        router.push('./home')
-      })
+      window.localStorage.setItem('userData', JSON.stringify(res));
+      window.localStorage.setItem('CognitoAccessToken', newUser.jwtToken);
+
+      const { data: AccUserData } = await API.graphql(graphqlOperation(createUser, {
+        input: {
+          PK: `ACCT#${id}`,
+          SK: `USER#${res.username}`,
+          email: email,
+          created_at: new Date().toISOString(),
+          account_pk: `ACCT#${id}`
+        },
+      }));
+      console.log('AccUser created:', AccUserData.createUser);
+      router.push('./home');
     } catch (error) {
-      console.log(error)
-      setError("Incorrect email or password")
+      console.log(error);
+      setError("Incorrect email or password");
     }
   }
+
 
   const imageSource = skin === 'bordered' ? 'auth-v2-login-illustration-bordered' : 'auth-v2-login-illustration'
 

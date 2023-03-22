@@ -12,6 +12,7 @@ const CanViewNavSectionTitle = props => {
   const ability = useContext(AbilityContext)
 
   return ability && ability.can(navTitle?.action, navTitle?.subject) ? <>{children}</> : null
+
 }
 
 export default CanViewNavSectionTitle
