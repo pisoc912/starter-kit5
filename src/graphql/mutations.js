@@ -12,7 +12,6 @@ export const createPayment = /* GraphQL */ `
       payment_id
       amount
       customer_email
-      created_at
       line_items {
         product_id
         amount
@@ -22,6 +21,7 @@ export const createPayment = /* GraphQL */ `
       subscription_id
       subscription_status
       account_pk
+      id
       createdAt
       updatedAt
       owner
@@ -39,7 +39,6 @@ export const updatePayment = /* GraphQL */ `
       payment_id
       amount
       customer_email
-      created_at
       line_items {
         product_id
         amount
@@ -49,6 +48,7 @@ export const updatePayment = /* GraphQL */ `
       subscription_id
       subscription_status
       account_pk
+      id
       createdAt
       updatedAt
       owner
@@ -66,7 +66,6 @@ export const deletePayment = /* GraphQL */ `
       payment_id
       amount
       customer_email
-      created_at
       line_items {
         product_id
         amount
@@ -76,6 +75,7 @@ export const deletePayment = /* GraphQL */ `
       subscription_id
       subscription_status
       account_pk
+      id
       createdAt
       updatedAt
       owner
@@ -91,11 +91,11 @@ export const createUser = /* GraphQL */ `
       PK
       SK
       email
-      created_at
       first_name
       last_name
       address
       account_pk
+      id
       createdAt
       updatedAt
       owner
@@ -111,11 +111,11 @@ export const updateUser = /* GraphQL */ `
       PK
       SK
       email
-      created_at
       first_name
       last_name
       address
       account_pk
+      id
       createdAt
       updatedAt
       owner
@@ -131,11 +131,11 @@ export const deleteUser = /* GraphQL */ `
       PK
       SK
       email
-      created_at
       first_name
       last_name
       address
       account_pk
+      id
       createdAt
       updatedAt
       owner
@@ -156,14 +156,17 @@ export const createAccount = /* GraphQL */ `
         PK
         SK
         email
-        created_at
         first_name
         last_name
         address
         account_pk
+        id
+        createdAt
         updatedAt
         owner
       }
+      id
+      createdAt
       updatedAt
       owner
     }
@@ -183,15 +186,16 @@ export const updateAccount = /* GraphQL */ `
         PK
         SK
         email
-        created_at
         first_name
         last_name
         address
         account_pk
+        id
         createdAt
         updatedAt
         owner
       }
+      id
       createdAt
       updatedAt
       owner
@@ -212,15 +216,85 @@ export const deleteAccount = /* GraphQL */ `
         PK
         SK
         email
-        created_at
         first_name
         last_name
         address
         account_pk
+        id
         createdAt
         updatedAt
         owner
       }
+      id
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const createCandidateListing = /* GraphQL */ `
+  mutation CreateCandidateListing(
+    $input: CreateCandidateListingInput!
+    $condition: ModelCandidateListingConditionInput
+  ) {
+    createCandidateListing(input: $input, condition: $condition) {
+      PK
+      SK
+      currentTitle
+      locationPreference
+      yearsOfExperience
+      seniorityLevel
+      requiredSkills
+      preferredSkills
+      industry
+      education
+      id
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const updateCandidateListing = /* GraphQL */ `
+  mutation UpdateCandidateListing(
+    $input: UpdateCandidateListingInput!
+    $condition: ModelCandidateListingConditionInput
+  ) {
+    updateCandidateListing(input: $input, condition: $condition) {
+      PK
+      SK
+      currentTitle
+      locationPreference
+      yearsOfExperience
+      seniorityLevel
+      requiredSkills
+      preferredSkills
+      industry
+      education
+      id
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const deleteCandidateListing = /* GraphQL */ `
+  mutation DeleteCandidateListing(
+    $input: DeleteCandidateListingInput!
+    $condition: ModelCandidateListingConditionInput
+  ) {
+    deleteCandidateListing(input: $input, condition: $condition) {
+      PK
+      SK
+      currentTitle
+      locationPreference
+      yearsOfExperience
+      seniorityLevel
+      requiredSkills
+      preferredSkills
+      industry
+      education
+      id
       createdAt
       updatedAt
       owner

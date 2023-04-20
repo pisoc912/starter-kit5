@@ -1,31 +1,14 @@
+
+
 const stripe = require('stripe')(process.env.NEXT_STRIPE_SECRET_KEY);
 
+const express = require('express');
 
-export default async function handler(req, res) {
+const router = express.Router();
+
+const handler = async (req, res) => {
+
   if (req.method === 'POST') {
-    const productId = 'PRODUCT_ID';
-    const price = 'PRICE';
-    const startDate = 'START_DATE';
-    const endDate = 'END_DATE';
-
-    // Handle a successful payment
-    const handlePayment = (result) => {
-      // Retrieve the payment intent ID and product name from the result
-      console.log(result)
-
-      // const stripeId = result.paymentIntent.id;
-      // const productName = result.paymentIntent.metadata.productName;
-
-      // // Use the retrieved values to do whatever you need
-      // console.log('Payment successful!');
-      // console.log(`Stripe ID: ${stripeId}`);
-      // console.log(`Product Name: ${productName}`);
-      // console.log(`Price: ${price}`);
-      // console.log(`Start Date: ${startDate}`);
-      // console.log(`End Date: ${endDate}`);
-    };
-
-
     try {
       // Create Checkout Sessions from body params.
       const session = await stripe.checkout.sessions.create({
@@ -41,11 +24,6 @@ export default async function handler(req, res) {
         automatic_tax: { enabled: true },
       })
       res.redirect(303, session.url)
-        .then((result) => {
-          handlePayment(result)
-          console.log(result, session)
-        })
-
     } catch (err) {
       res.status(err.statusCode || 500).json(err.message);
     }
@@ -53,4 +31,49 @@ export default async function handler(req, res) {
     res.setHeader('Allow', 'POST');
     res.status(405).end('Method Not Allowed');
   }
+
+  //Stripe Webhook
+  const endpointSecret = 'whsec_645cbb489cebb248a04d8ccc09446e954d1ddb842469538acc0814eb23ded51c'
+  router.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
+    let event = request.body;
+
+    if (endpointSecret) {
+      // Get the signature sent by Stripe
+      const signature = request.headers['stripe-signature'];
+      try {
+        event = stripe.webhooks.constructEvent(
+          request.body,
+          signature,
+          endpointSecret
+        );
+        console.log("webhook verified")
+      } catch (err) {
+        console.log(`⚠️  Webhook signature verification failed.`, err.message);
+
+        return response.sendStatus(400);
+      }
+    }
+
+    // Handle the event
+    // switch (event.type) {
+    //   case 'payment_intent.succeeded':
+    //     const paymentIntent = event.data.object;
+    //     console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+
+    //     break;
+    //   case 'payment_method.attached':
+    //     const paymentMethod = event.data.object;
+
+    //     break;
+    //   default:
+    //     // Unexpected event type
+    //     console.log(`Unhandled event type ${event.type}.`);
+    // }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+  });
+
 }
+
+export default handler;

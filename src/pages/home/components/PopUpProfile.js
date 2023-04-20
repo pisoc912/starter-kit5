@@ -1,45 +1,111 @@
-import { Dialog, DialogContent, DialogTitle, Typography } from '@mui/material'
-import React from 'react'
-import { useState } from 'react'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material'
+import React, { useState, useEffect } from 'react'
+import useSearch from 'src/@core/hooks/useSearch';
+import { Storage } from 'aws-amplify';
+
 
 const PopUpProfile = (props) => {
-  const { title, children, openPopup, setOpenPopup } = props
+  const { open, setOpen } = props
+  const [csvData, setCsvData] = useState([])
+  const [filteredData] = useSearch(csvData);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
 
   const handleClose = () => {
-    setOpenPopup(false)
+    setOpen(false)
   }
 
-  const [fullWidth, setFullWidth] = useState(true);
-  const [maxWidth, setMaxWidth] = useState('lg');
+  useEffect(() => {
+    getCsvData();
+  }, []);
 
-  const handleMaxWidthChange = (event) => {
-    setMaxWidth(
+  const getCsvData = async () => {
+    try {
+      Storage.configure({ region: 'us-west-1' })
+      const listResponse = await Storage.list('talentsource/')
 
-      // @ts-expect-error autofill of arbitrary value is not handled.
-      event.target.value,
-    );
-  };
+      const fileKey = listResponse.results[2].key
 
-  const handleFullWidthChange = (event) => {
-    setFullWidth(event.target.checked);
-  };
+
+      const file = await Storage.get(fileKey, {
+        level: 'public',
+        contentType: 'text/csv'
+      })
+      const response = await fetch(file)
+      const text = await response.text()
+
+      const rows = text.split('\n')
+
+      const headers = rows[0].split(',')
+
+      const csvData = rows.slice(1).map(row => {
+        const values = row.split(',');
+        const obj = {};
+
+        values.forEach((value, index) => {
+          value = value.replace(/"/g, "").trim();
+          obj[headers[index]] = value;
+        });
+
+        return obj;
+      });
+
+      setCsvData(csvData);
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
 
   return (
-    <Dialog
-      open={openPopup}
-      onClose={handleClose}
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
-      PaperProps={{ sx: { width: "80%", height: "80%" } }}
-    >
-      <DialogTitle>
-        <Typography>{title}</Typography>
-      </DialogTitle>
-      <DialogContent>
-        {children}
-      </DialogContent>
-    </Dialog>
+    <div>
+      {
+        filteredData.map((data, index) => (
+          <Dialog
+            key={index}
+            open={open}
+            onClose={handleClickOpen}
+            maxWidth='lg'
+            fullWidth
+            PaperProps={{ sx: { width: "80%", height: "80%" } }}
+            display='flex'
+            direction='column'
+          >
+
+            <DialogContent key={index}>
+              <Grid container alignItems="center" justifyContent="center">
+                <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography variant='h5'>{data.talent_person_name}</Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant='h5'>{data.job_history}</Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant='h5'>{data.industry_name}</Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant='h5'>hello</Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={6}>
+
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose}>Subscribe</Button>
+            </DialogActions>
+          </Dialog>
+        ))
+      }
+    </div>
+
   )
 }
 

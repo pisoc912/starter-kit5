@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, Divider, Fab, Grid, IconButton, List, ListItemButton, ListItemIcon, ListItemText, TextField } from '@mui/material'
 
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import TalentPool from './TalentPool'
 import Form from './Form'
 
@@ -10,14 +10,57 @@ import EmailIcon from '@mui/icons-material/Email';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
+import AWS from 'aws-sdk';
 
-
-const TalentPoolFull = () => {
+const TalentPoolFull = (props) => {
+  const { csvData, filteredData } = props
   const [active, setActive] = useState("")
   const [search, setSearch] = useState("")
 
+  // console.log(JSON.stringify(csvData[0]))
+  // console.log(csvData.filter(data => data.talent_first_name === "Web"))
+  AWS.config.update({
+    region: 'us-east-1'
+  });
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Assume IAM role in another AWS account
+        const sts = new AWS.STS();
+
+        const assumeRoleParams = {
+          RoleArn: 'arn:aws:iam::851565480501:role/talentsourcingLambdaRole59acd701-dev',
+          RoleSessionName: '/',
+          DurationSeconds: 900
+        };
+        const assumeRoleResult = await sts.assumeRole(assumeRoleParams).promise();
+
+        // Use temporary credentials to call your Lambda function
+        const lambda = new AWS.Lambda({
+          region: 'us-east-1',
+          credentials: assumeRoleResult.Credentials
+        });
+
+        const response = await lambda.invoke({
+          FunctionName: 'talent-sourcing-rds',
+          Payload: JSON.stringify({})
+        }).promise();
+
+        const result = JSON.parse(response.Payload);
+        setData(result);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
   return (
-    <Grid container xs={12}>
+    <Grid container>
       <Grid item xs={3.5}>
         <div>
           <Card sx={{ height: 600 }}>
@@ -79,7 +122,7 @@ const TalentPoolFull = () => {
       </Grid>
       <Grid item xs={8}>
         {active === "NewOrder" && <Form close={setActive} />}
-        {!active && <TalentPool search={setSearch} />}
+        {!active && <TalentPool search={search} setSearch={setSearch} />}
       </Grid>
     </Grid>
   )

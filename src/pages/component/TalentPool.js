@@ -1,105 +1,134 @@
 import React from 'react'
-import { Box, Button, Card, Grid, Paper, TableCell, TableRow, styled, Table, TableHead, Typography, IconButton, Tooltip } from '@mui/material'
+import { Box, Button, Card, Grid, Paper, TableCell, TableRow, styled, Table, TableHead, Typography, IconButton, Tooltip, CardContent, CardHeader, TableBody, TableContainer, TablePagination } from '@mui/material'
 import { useState, useEffect } from 'react'
-import axios from 'axios'
-import EditIcon from '@mui/icons-material/Edit';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import ClearIcon from '@mui/icons-material/Clear';
-import { useRouter } from 'next/router';
+import { Storage } from 'aws-amplify';
+import useSearch from 'src/@core/hooks/useSearch';
 
 
 
 
-const TalentPool = (search) => {
-  const [candidates, setCandidates] = useState([])
-  const API_URL = 'https://kasek7o0kk.execute-api.us-west-2.amazonaws.com/test';
-  const [user, setUser] = useState("")
+const TalentPool = (props) => {
+  const { search } = props
+  const [csvData, setCsvData] = useState([])
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [filteredData, handleSearch] = useSearch(csvData);
+
 
   useEffect(() => {
-    getData()
-  }, [])
+    getCsvData();
+  }, []);
 
-  const getData = async () => {
-    const response = await axios.get(API_URL)
-    setCandidates(response.data.Items)
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+
+
+  const getCsvData = async () => {
+    try {
+      Storage.configure({ region: 'us-west-1' })
+      const listResponse = await Storage.list('talentsource/')
+
+      const fileKey = listResponse.results[1].key
+
+
+      const file = await Storage.get(fileKey, {
+        level: 'public',
+        contentType: 'text/csv'
+      })
+      const response = await fetch(file)
+      const text = await response.text()
+
+      const rows = text.split('\n')
+
+      const headers = rows[0].split(',')
+
+      const csvData = rows.slice(1).map(row => {
+        const values = row.split(',');
+        const obj = {};
+
+        values.forEach((value, index) => {
+          value = value.replace(/"/g, "").trim();
+          obj[headers[index]] = value;
+        });
+
+        return obj;
+      });
+
+      setCsvData(csvData);
+    } catch (error) {
+      console.error(error)
+    }
   }
-
-  const handleDelete = async (id) => {
-    try {
-      return await axios.delete(`${API_URL}/${id}`),
-        getData()
-    } catch (error) {
-      console.log("error while calling deleteUser api", error)
-    }
-  };
-
-  const handleUpdate = async (id) => {
-    try {
-      return await axios.update(`${API_URL}/${id}`)
-
-    } catch (error) {
-      console.log("error while calling deleteUser api", error)
-    }
-  };
-
-
 
 
   return (
-    <Box sx={{ height: "100%", width: '100%' }}>
+    <Grid container>
+      <Grid item xs={12}>
+        <Typography variant="h4">Talent Pool</Typography>
+        <TableContainer sx={{ mt: 4 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Current Position</TableCell>
+                <TableCell>AP Profile URL</TableCell>
+                <TableCell>LinkedIn URL</TableCell>
+                <TableCell>Employer</TableCell>
+                <TableCell>Location</TableCell>
+                <TableCell>Employee Size</TableCell>
+                <TableCell>Industry</TableCell>
+                <TableCell>Keywords</TableCell>
+                <TableCell>Website URL</TableCell>
+                <TableCell>LinkedIn URL</TableCell>
+                <TableCell>Twitter URL</TableCell>
+                <TableCell>Other Twitter URL</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .filter((data) => Object.values(data).every((value) => value !== "N/A"))
+                .filter((data) => data.talent_first_name.toLowerCase().includes(search.toLowerCase()))
+                .map((data, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{data.talent_person_name}</TableCell>
+                    <TableCell>{data.talent_employment_current_position}</TableCell>
+                    <TableCell>{data.talent_profile_AP_url}</TableCell>
+                    <TableCell>{data.talent_linkedin_url}</TableCell>
+                    <TableCell>{data.talent_employment_current_company_name}</TableCell>
+                    <TableCell>{data.talent_location}</TableCell>
+                    <TableCell>{data.company_employee_size}</TableCell>
+                    <TableCell>{data.company_industry}</TableCell>
+                    <TableCell>{data.company_keywords}</TableCell>
+                    <TableCell>{data.company_website_url}</TableCell>
+                    <TableCell>{data.company_linkedin_url}</TableCell>
+                    <TableCell>{data.company_twitter_url}</TableCell>
+                    <TableCell>{data.talent_twitter_url_link}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
 
-      {/* <Card scrollSnapType='y' overflowX='scroll' scrollSnapAlign='start' sx={{ height: "100%" }}> */}
-      <Grid container xs={12} >
-        <Grid item xs={12}>
-          {candidates
-            .map(user => (
-              <Card key={user.id} sx={{ m: 4, mt: 0, height: 100 }}>
-                <Typography sx={{ m: 4, mt: 4, mb: 1 }} variant='h5'>{user.currentTitle}</Typography>
-                <Grid container xs={12} sx={{ m: 4, mt: 2, mb: 4 }} direction="row" justifyContent='center' alignItems='center'>
-                  <Grid item xs={2}>
-                    date
-                  </Grid>
-                  <Grid item xs={2}>
-                    ShortList
-                  </Grid>
-                  <Grid item xs={5}>
-                    Candidates:{user.locationPreference}
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Tooltip title="Edit">
-                      <IconButton onClick={() => handleUpdate()}>
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Mark">
-                      <IconButton>
-                        <BookmarkIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="More">
-                      <IconButton>
-                        <MoreVertIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="More">
-                      <IconButton onClick={() => handleDelete(user.id)}>
-                        <ClearIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </Grid>
-                </Grid>
-              </Card>
-            ))}
-          <Grid item xs={12}>
-          </Grid>
-        </Grid>
+
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 50, 100]}
+          component="div"
+          count={csvData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Grid>
-
-      {/* </Card> */}
-
-    </Box>
+    </Grid>
   )
 }
 

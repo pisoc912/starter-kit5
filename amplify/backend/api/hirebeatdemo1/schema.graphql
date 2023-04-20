@@ -1,0 +1,116 @@
+type Payment @model(subscriptions: null) @auth(rules: [{ allow: owner }]) {
+  PK: ID!
+  SK: ID!
+  payment_id: ID!
+  amount: Float!
+  customer_email: String!
+  line_items: [LineItem!]!
+  subscription_id: ID
+  subscription_status: String
+  account_pk: ID!
+}
+
+type User @model(subscriptions: null) @auth(rules: [{ allow: owner }]) {
+  PK: ID!
+  SK: ID!
+  email: String!
+  first_name: String
+  last_name: String
+  address: String
+  account_pk: ID!
+}
+
+type Account @model @auth(rules: [{ allow: owner }]) {
+  PK: ID!
+  SK: ID!
+  company_name: String!
+  created_at: String!
+  users: [User!]!
+}
+
+type LineItem {
+  product_id: ID!
+  amount: Float!
+  quantity: Int!
+  currency: String!
+}
+
+input LineItemInput {
+  product_id: ID!
+  amount: Float!
+  quantity: Int!
+  currency: String!
+}
+
+enum seniorityLevelType {
+  Entry
+  Associate
+  Senior
+}
+
+enum RequiredSkillType {
+  communication
+  teamwork
+  problemSolving
+  initiativeAndEnterprise
+  planningAndOrganising
+  selfManagement
+  learning
+  technology
+}
+
+enum PreferredSkillType {
+  cloudComputing
+  machineLearning
+  figma
+  aws
+  dataAnalysis
+  webDevelopment
+  userExperienceUx
+  cybersecurityAnalytics
+}
+
+enum IndustryType {
+  it
+  advertisingAndMarketing
+  healthCare
+  businessAndFinance
+  retail
+  foodAndHospitality
+  education
+  artsAndEntertainment
+}
+
+enum EducationType {
+  highschoolDegree
+  associatesDegree
+  bachelorsDegree
+  mastersDegree
+  doctoralDegree
+}
+
+type CandidateListing @model @auth(rules: [{ allow: owner }]) {
+  PK: ID!
+  SK: ID!
+  currentTitle: String!
+  locationPreference: String!
+  yearsOfExperience: String!
+  seniorityLevel: [seniorityLevelType!]!
+  requiredSkills: [RequiredSkillType!]!
+  preferredSkills: [PreferredSkillType!]!
+  industry: [IndustryType!]!
+  education: [EducationType!]
+}
+
+input CandidateListingInput {
+  PK: ID!
+  SK: ID!
+  currentTitle: String!
+  locationPreference: String!
+  yearsOfExperience: String!
+  seniorityLevel: [seniorityLevelType]
+  requiredSkills: [RequiredSkillType!]!
+  preferredSkills: [PreferredSkillType!]!
+  industry: [IndustryType!]!
+  education: [EducationType!]
+}

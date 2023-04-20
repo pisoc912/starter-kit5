@@ -46,6 +46,7 @@ import { API, Auth, graphqlOperation } from 'aws-amplify'
 import { createUser, createAccount } from 'src/graphql/mutations'
 
 import { ulid } from 'ulid';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 
 
 const defaultValues = {
@@ -110,6 +111,10 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 const Register = () => {
   // ** States
   const [showPassword, setShowPassword] = useState(false)
+  const [verificationCode, setVerificationCode] = useState("")
+  const [showVerification, setShowVerification] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [error, setError] = useState("")
 
   // ** Hooks
   const theme = useTheme()
@@ -120,6 +125,7 @@ const Register = () => {
   const [companyName, setCompanyName] = useState("")
   const [password, setPassword] = useState("")
   const router = useRouter()
+
 
 
   // ** Vars
@@ -135,7 +141,6 @@ const Register = () => {
 
   const {
     control,
-    setError,
     formState: { errors }
   } = useForm({
     defaultValues,
@@ -157,7 +162,8 @@ const Register = () => {
           email
         }
       });
-
+      setShowVerification(true)
+      setOpen(true)
 
       const { data: userData } = await API.graphql(graphqlOperation(createUser, {
         input: {
@@ -485,6 +491,23 @@ const Register = () => {
                 </IconButton>
               </Box>
             </form>
+            {showVerification && (
+              <Dialog open={open} onClose={() => setOpen(false)}>
+                <DialogTitle>Verify Email</DialogTitle>
+                <DialogContent>
+                  <form onSubmit={handleVerification}>
+                    <TextField label="Verification Code" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} margin="dense" fullWidth />
+                  </form>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpen(false)}>Cancel</Button>
+                  <Button onClick={handleVerification} color="primary" variant="contained">
+                    Verify
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            )}
+            {error && <p>{error}</p>}
           </BoxWrapper>
         </Box>
       </RightWrapper>

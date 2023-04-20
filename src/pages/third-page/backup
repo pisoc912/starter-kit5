@@ -1,0 +1,183 @@
+import React from 'react'
+import {
+  Box,
+  Button,
+  Card,
+  Grid,
+  Paper,
+  TableCell,
+  TableRow,
+  styled,
+  Table,
+  TableHead,
+  Typography,
+  IconButton,
+  Tooltip,
+  CardContent,
+  CardHeader,
+  TableBody,
+  TableContainer,
+  TablePagination,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  Link,
+  Pagination,
+  Tabs,
+  Tab,
+  Divider,
+  List,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  DialogActions,
+  InputAdornment,
+  InputBase
+} from '@mui/material'
+import { useState, useEffect } from 'react'
+import { Storage } from 'aws-amplify'
+import useSearch from 'src/@core/hooks/useSearch'
+import { LinkedIn, Search, Twitter, Web } from '@mui/icons-material'
+import PopUpProfile from '../home/components/PopUpProfile'
+import cssVars from '@mui/system/cssVars'
+
+const ThirdPage = () => {
+  const [value, setValue] = useState(0)
+  const [csvData, setCsvData] = useState([])
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(20)
+  const [filteredData] = useSearch(csvData)
+  const [open, setOpen] = useState(false)
+  const [selectedData, setSelectedData] = useState(null)
+
+  useEffect(() => {
+    getCsvData()
+  }, [])
+
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const getCsvData = async () => {
+    try {
+      Storage.configure({ region: 'us-west-1' })
+      const listResponse = await Storage.list('talentsource/')
+
+      const fileKey = listResponse.results[1].key
+
+      const file = await Storage.get(fileKey, {
+        level: 'public',
+        contentType: 'text/csv'
+      })
+      const response = await fetch(file)
+      const text = await response.text()
+
+      const rows = text.split('\n')
+
+      const headers = rows[0].split(',')
+
+      const csvData = rows.slice(1).map(row => {
+        const values = row.split(',')
+        const obj = {}
+
+        values.forEach((value, index) => {
+          value = value.replace(/"/g, '').trim()
+          obj[headers[index]] = value
+        })
+
+        return obj
+      })
+
+      setCsvData(csvData)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  // const handleChange = (e) => {
+  //   const value = e.target.value
+  //   setCsvData(prev => {
+  //     return prev.filter(csvData => csvData.includes(value.toLowerCase()))
+  //   })
+
+  // }
+
+  return (
+    <Grid container>
+      <Grid item xs={12} spacing={2}>
+        <Paper component='form' sx={{ p: '2px 4px', mb: 4, display: 'flex', alignItems: 'center' }}>
+          <IconButton sx={{ p: '10px' }} aria-label='menu'>
+            <Search />
+          </IconButton>
+          <InputBase sx={{ ml: 1, flex: 1 }} placeholder='Search Industry' />
+          <Button variant='text'>Search</Button>
+        </Paper>
+
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((data, index) => (
+            <div key={index}>
+              <Card sx={{ minHeight: 100, mb: 2, display: 'flex' }}>
+                <ListItem direction='row' alignItems='center' justifyContent='center' sx={{ width: '30%' }}>
+                  <ListItemAvatar>
+                    <Avatar alt={data.talent_person_name} src='/images/avatar/1.png' />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={data.talent_person_name}
+                    secondary={
+                      <React.Fragment>
+                        <Typography sx={{ display: 'inline' }} component='span' variant='body2' color='text.primary'>
+                          {String(data.talent_location)}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                </ListItem>
+
+                <CardContent sx={{ flex: '1 0 auto', width: '20%', display: 'flex', alignItems: 'center' }}>
+                  <Typography component='div' variant='h8'>
+                    {data.talent_employment_current_position}
+                  </Typography>
+                </CardContent>
+                <CardContent sx={{ flex: '1 0 auto', width: '20%', display: 'flex', alignItems: 'center' }}>
+                  <Typography component='div' variant='h8'>
+                    {data.company_keywords}
+                  </Typography>
+                </CardContent>
+                <CardContent sx={{ flex: '1 0 auto', width: '10%', display: 'flex', alignItems: 'center' }}>
+                  <Link href={data.talent_linkedin_url}>
+                    <LinkedIn />
+                  </Link>
+                </CardContent>
+                <CardContent sx={{ flex: '1 0 auto', width: '10%', display: 'flex', alignItems: 'center' }}>
+                  <Link href={data.company_twitter_url}>
+                    <Twitter />
+                  </Link>
+                </CardContent>
+                <CardContent sx={{ flex: '1 0 auto', width: '10%', display: 'flex', alignItems: 'center' }}>
+                  <Button startIcon={<Web />} onClick={handleClickOpen}>
+                    View details
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+          <Pagination
+            count={Math.ceil(filteredData.length / rowsPerPage)}
+            page={page}
+            onChange={(event, value) => setPage(value)}
+          />
+        </Box>
+
+        <PopUpProfile open={open} setOpen={setOpen}></PopUpProfile>
+      </Grid>
+    </Grid>
+  )
+}
+
+export default ThirdPage

@@ -137,43 +137,6 @@ const LoginPage = () => {
     resolver: yupResolver(schema)
   })
 
-  // const onSubmit = async () => {
-  //   try {
-  //     Auth.signIn(email, password).then(res => {
-  //       console.log(res)
-  //       const prefix = res.keyPrefix
-  //       const userName = res.username
-
-  //       var newUser = {
-  //         role: 'admin',
-  //         password: '',
-  //         fullName: res.attributes.email,
-  //         username: res.username,
-  //         email: res.attributes.email,
-  //         jwtToken: res.storage[prefix + '.' + userName + ".accessToken"]
-  //       }
-  //       console.log(newUser)
-  //       auth.setUser(newUser)
-  //       window.localStorage.setItem('userData', JSON.stringify(res))
-  //       window.localStorage.setItem('CognitoAccessToken', newUser.jwtToken);
-
-  //       const { data: AccUserData } = await API.graphql(graphqlOperation(createUser, {
-  //         input: {
-  //           PK: `ACCT#${id}`,
-  //           SK: `USER#${id}`,
-  //           email: email,
-  //           created_at: new Date().toISOString(),
-  //           account_pk: `ACCT#${id}`
-  //         },
-  //       }));
-  //       console.log('User created:', userData.createUser);
-  //       router.push('./home')
-  //     })
-  //   } catch (error) {
-  //     console.log(error)
-  //     setError("Incorrect email or password")
-  //   }
-  // }
 
   const onSubmit = async () => {
     const id = ulid();
@@ -194,13 +157,6 @@ const LoginPage = () => {
       console.log(newUser);
       auth.setUser(newUser);
 
-      // Get the user's session and set it in state or storage
-      // const session = await Auth.currentSession();
-      // const accessToken = session.getAccessToken().getJwtToken();
-      // const idToken = session.getIdToken().getJwtToken();
-      // console.log(session);
-      // auth.setSession({ accessToken, idToken });
-
       window.localStorage.setItem('userData', JSON.stringify(res));
       window.localStorage.setItem('CognitoAccessToken', newUser.jwtToken);
 
@@ -209,7 +165,6 @@ const LoginPage = () => {
           PK: `ACCT#${id}`,
           SK: `USER#${res.username}`,
           email: email,
-          created_at: new Date().toISOString(),
           account_pk: `ACCT#${id}`
         },
       }));

@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid'
 import { useState } from 'react'
 import ThirdPage from '../third-page'
 import Header from './components/Header'
+import Payment from './components/Payment'
 
 
 
@@ -33,7 +34,7 @@ const Home = () => {
         </ButtonGroup>
       </Grid>
       <Divider /> */}
-      <ThirdPage />
+      <Payment />
       {/* <Grid container>
         {active === "TalentPool" && <TalentPoolFull />}
         {active === "Candidates" && <CandidatesFull />}

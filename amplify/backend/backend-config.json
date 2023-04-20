@@ -1,23 +1,30 @@
 {
   "api": {
-    "HIRE": {
+    "hirebeatdemo1": {
       "dependsOn": [
         {
           "attributes": [
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "hire60001228"
+          "resourceName": "hirebeatdemo14594d363"
         }
       ],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [],
-          "defaultAuthentication": {
-            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-            "userPoolConfig": {
-              "userPoolId": "authhire60001228"
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authhirebeatdemo14594d363"
+              }
             }
+          ],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 7
+            },
+            "authenticationType": "API_KEY"
           }
         }
       },
@@ -26,7 +33,7 @@
     }
   },
   "auth": {
-    "hire60001228": {
+    "hirebeatdemo14594d363": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {

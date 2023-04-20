@@ -9,7 +9,6 @@ export const getPayment = /* GraphQL */ `
       payment_id
       amount
       customer_email
-      created_at
       line_items {
         product_id
         amount
@@ -19,6 +18,7 @@ export const getPayment = /* GraphQL */ `
       subscription_id
       subscription_status
       account_pk
+      id
       createdAt
       updatedAt
       owner
@@ -38,7 +38,6 @@ export const listPayments = /* GraphQL */ `
         payment_id
         amount
         customer_email
-        created_at
         line_items {
           product_id
           amount
@@ -48,6 +47,7 @@ export const listPayments = /* GraphQL */ `
         subscription_id
         subscription_status
         account_pk
+        id
         createdAt
         updatedAt
         owner
@@ -62,11 +62,11 @@ export const getUser = /* GraphQL */ `
       PK
       SK
       email
-      created_at
       first_name
       last_name
       address
       account_pk
+      id
       createdAt
       updatedAt
       owner
@@ -84,11 +84,11 @@ export const listUsers = /* GraphQL */ `
         PK
         SK
         email
-        created_at
         first_name
         last_name
         address
         account_pk
+        id
         createdAt
         updatedAt
         owner
@@ -108,15 +108,16 @@ export const getAccount = /* GraphQL */ `
         PK
         SK
         email
-        created_at
         first_name
         last_name
         address
         account_pk
+        id
         createdAt
         updatedAt
         owner
       }
+      id
       createdAt
       updatedAt
       owner
@@ -139,15 +140,67 @@ export const listAccounts = /* GraphQL */ `
           PK
           SK
           email
-          created_at
           first_name
           last_name
           address
           account_pk
+          id
           createdAt
           updatedAt
           owner
         }
+        id
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+    }
+  }
+`;
+export const getCandidateListing = /* GraphQL */ `
+  query GetCandidateListing($id: ID!) {
+    getCandidateListing(id: $id) {
+      PK
+      SK
+      currentTitle
+      locationPreference
+      yearsOfExperience
+      seniorityLevel
+      requiredSkills
+      preferredSkills
+      industry
+      education
+      id
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const listCandidateListings = /* GraphQL */ `
+  query ListCandidateListings(
+    $filter: ModelCandidateListingFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listCandidateListings(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        PK
+        SK
+        currentTitle
+        locationPreference
+        yearsOfExperience
+        seniorityLevel
+        requiredSkills
+        preferredSkills
+        industry
+        education
+        id
         createdAt
         updatedAt
         owner

@@ -1,11 +1,13 @@
-import { Card, Grid, IconButton, TextField, Typography, MenuItem, Select, InputLabel, Button, NativeSelect, Checkbox, ListItemText, OutlinedInput } from '@mui/material'
+import { Card, Grid, IconButton, TextField, Typography, MenuItem, Select, InputLabel, Button, NativeSelect, Checkbox, ListItemText, OutlinedInput, Chip, Box } from '@mui/material'
 import React from 'react'
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import uuid from 'react-uuid';
+import { ulid } from 'ulid';
+import { API, Auth, graphqlOperation } from 'aws-amplify';
 import { useRouter } from 'next/router';
+import { createCandidateListing } from 'src/graphql/mutations'
 
 
 
@@ -13,20 +15,17 @@ import { useRouter } from 'next/router';
 const Form = ({ close }) => {
   const [user, setUser] = useState("")
   const [error, setError] = useState('')
-  const [requiredSkills, setRequiredSkills] = useState([])
-  const [preferredSkills, setPreferredSkills] = useState([])
-  const [Industry, setIndustry] = useState([])
-  const [education, setEducation] = useState([])
-  const id = new Date().getTime();
-  const { currentTitle, locationPreference, yearsOfExperience, seniorityLevel, requiredSkillSets, industry } = user;
+
+  const { currentTitle, locationPreference, yearsOfExperience, seniorityLevel, requiredSkills = [], preferredSkills = [], industry = [], education = [] } = user;
   const router = useRouter()
+
 
   const requiredNames = [
     "Communication",
     "Teamwork",
-    "Problem solving",
-    "Initiative and enterprise",
-    "Planning and Organising",
+    "ProblemSolving",
+    "Initiative And Enterprise",
+    "Planning And Organising",
     "Self-management",
     "Learning",
     "Technology",
@@ -39,8 +38,8 @@ const Form = ({ close }) => {
     "AWS",
     "Data Analysis",
     "Web Development",
-    "LUser experience (UX)",
-    "Cybersecurity analytics",
+    "User experience (UX)",
+    "Cybersecurity Analytics",
   ];
 
   const IndustryNames = [
@@ -49,7 +48,7 @@ const Form = ({ close }) => {
     "Health care",
     "Business and finance",
     "Retail",
-    "Food and hospitality ",
+    "Food and hospitality",
     "Education",
     "Arts and entertainment",
   ];
@@ -62,35 +61,46 @@ const Form = ({ close }) => {
     "Doctoral Degree",
   ];
 
-  const handleClicked = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setRequiredSkills(typeof value === 'string' ? value.split(',') : value,);
-    setPreferredSkills(typeof value === 'string' ? value.split(',') : value,);
-    setIndustry(typeof value === 'string' ? value.split(',') : value,);
-    setEducation(typeof value === 'string' ? value.split(',') : value,);
-  };
 
   const handleChange = (e) => {
-    setUser({ ...user, id: id, [e.target.name]: e.target.value })
-    console.log(e.target.value)
+    setUser({ ...user, [e.target.name]: e.target.value })
+    console.log({ ...user }, e.target.name, e.target.value)
   }
 
-  const addUser = async (e) => {
-    await axios.post(`${API_URL}`, e)
-  }
 
   const handleAdd = async () => {
     if (!currentTitle || !locationPreference || !yearsOfExperience) {
-      setError("please input all input Filed!")
+      setError("Please input all required fields!");
     } else {
-      await addUser(user)
+      console.log(await Auth.currentUserInfo())
+      try {
+        const id = ulid();
 
-      close(false)
-      setError("")
+        const { data: candidateData } = await API.graphql(graphqlOperation(createCandidateListing, {
+          input: {
+            PK: `ACC#${id}`,
+            SK: `CAND#${id}`,
+            currentTitle: currentTitle,
+            locationPreference: locationPreference,
+            yearsOfExperience: yearsOfExperience,
+            seniorityLevel: seniorityLevel,
+            requiredSkills: requiredSkills,
+            preferredSkills: preferredSkills,
+            industry: industry,
+            education: education,
+          },
+        }));
+        console.log('Candidate listing created:', candidateData.createCandidateListing);
+
+      } catch (error) {
+        console.log(error);
+        setError("An error occurred while creating the candidate listing.");
+      }
+      close(false);
+      setError("");
     }
   }
+
 
 
 
@@ -155,13 +165,10 @@ const Form = ({ close }) => {
             <NativeSelect
               required
               defaultValue={""}
+              name="seniorityLevel"
               fullWidth
               value={seniorityLevel}
-              name="seniorityLevel"
               onChange={(e) => handleChange(e)}
-              inputProps={{
-                id: 'uncontrolled-native'
-              }}
             >
               <option value={""}>Select...</option>
               <option >Entry</option>
@@ -178,13 +185,13 @@ const Form = ({ close }) => {
             <Select
               multiple
               fullWidth
+              name='requiredSkills'
               value={requiredSkills}
-              onChange={e => handleClicked(e)}
+              onChange={(e) => handleChange(e)}
               renderValue={(selected) => selected.join(', ')}
             >
               {requiredNames.map((name) => (
                 <MenuItem key={name} value={name}>
-                  <Checkbox checked={requiredSkills.indexOf(name) > -1} />
                   <ListItemText primary={name} />
                 </MenuItem>
               ))}
@@ -198,13 +205,13 @@ const Form = ({ close }) => {
               defaultValue={""}
               fullWidth
               multiple
+              name="preferredSkills"
               value={preferredSkills}
-              onChange={(e) => handleClicked(e)}
+              onChange={(e) => handleChange(e)}
               renderValue={(selected) => selected.join(', ')}
             >
               {preferredNames.map((name) => (
                 <MenuItem key={name} value={name}>
-                  <Checkbox checked={preferredSkills.indexOf(name) > -1} />
                   <ListItemText primary={name} />
                 </MenuItem>
               ))}
@@ -220,13 +227,13 @@ const Form = ({ close }) => {
               fullWidth
               multiple
               required
-              value={Industry}
-              onChange={(e) => handleIndustry(e)}
+              name='industry'
+              value={industry}
+              onChange={(e) => handleChange(e)}
               renderValue={(selected) => selected.join(', ')}
             >
               {IndustryNames.map((name) => (
                 <MenuItem key={name} value={name}>
-                  <Checkbox checked={Industry.indexOf(name) > -1} />
                   <ListItemText primary={name} />
                 </MenuItem>
               ))}
@@ -241,13 +248,13 @@ const Form = ({ close }) => {
               fullWidth
               multiple
               required
+              name='education'
               value={education}
-              onChange={(e) => handleEducation(e)}
+              onChange={(e) => handleChange(e)}
               renderValue={(selected) => selected.join(', ')}
             >
               {educationNames.map((name) => (
                 <MenuItem key={name} value={name}>
-                  <Checkbox checked={education.indexOf(name) > -1} />
                   <ListItemText primary={name} />
                 </MenuItem>
               ))}
