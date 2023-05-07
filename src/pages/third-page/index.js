@@ -1,51 +1,44 @@
-import clsx from 'clsx'
+
 import React, { useDeferredValue, useEffect, useState } from 'react'
 import SearchTalent from './searchTalent'
 import TalentSource from './TalentSource'
 
 const ThirdPage = () => {
-  const [search, setSearch] = useState("")
-  const [talentData, setTalentData] = useState([])
-  const [isSearching, setIsSearching] = useState(false)
+  const [talentData, setTalentData] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [keyword, setKeyword] = useState('');
 
-  const deferredInput = useDeferredValue(search)
+  const handleChange = (event) => {
+    setKeyword(event.target.value);
+  };
 
-  useEffect(() => {
-    if (deferredInput !== "") {
-      fetchData(deferredInput).then((data) => {
-        setTalentData(data)
-      })
-    } else {
-      setTalentData([])
+  const search = async (event) => {
+    event.preventDefault();
+    if (!keyword) {
+      return;
     }
-  }, [isSearching, deferredInput])
 
+    setIsSearching(true);
 
-  const fetchData = async (input) => {
-    return fetch(
-      `https://a2mwnnax40.execute-api.us-west-1.amazonaws.com/test?q=${input}`
-    )
-      .then((res) => res.json())
+    const requestOptions = {
+      method: 'GET'
+    };
 
-      .then((talentData) => {
-        return talentData.hits.hits
-
-      })
-
-  }
-
-
-  const handleChange = (e) => {
-    setSearch(e.target.value)
-
-  }
-
-
+    try {
+      const response = await fetch(`https://a2mwnnax40.execute-api.us-west-1.amazonaws.com/test?keyword=${encodeURIComponent(keyword)}`, requestOptions);
+      const data = await response.json();
+      setTalentData(data.hits.hits); // Set the talentData state with the fetched data
+      setIsSearching(false);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      setIsSearching(false);
+    }
+  };
 
   return (
     <>
-      <SearchTalent handleChange={handleChange} />
-      <TalentSource results={talentData} />
+      <SearchTalent handleChange={handleChange} search={search} />
+      <TalentSource results={talentData} isSearching={isSearching} />
 
     </>
   )

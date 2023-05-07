@@ -8,6 +8,7 @@ import { ulid } from 'ulid';
 import { API, Auth, graphqlOperation } from 'aws-amplify';
 import { useRouter } from 'next/router';
 import { createCandidateListing } from 'src/graphql/mutations'
+import PlacesAutocomplete, { geocodeByAddress } from 'react-places-autocomplete';
 
 
 
@@ -19,46 +20,66 @@ const Form = ({ close }) => {
   const { currentTitle, locationPreference, yearsOfExperience, seniorityLevel, requiredSkills = [], preferredSkills = [], industry = [], education = [] } = user;
   const router = useRouter()
 
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+
+  const handleSelect = async (selectedAddress) => {
+    const results = await geocodeByAddress(selectedAddress);
+    const addressComponents = results[0].address_components;
+
+    const city = addressComponents.find((component) =>
+      component.types.includes("locality")
+    ).long_name;
+
+    const state = addressComponents.find((component) =>
+      component.types.includes("administrative_area_level_1")
+    ).short_name;
+    setCity(city);
+    setState(state);
+    setAddress(selectedAddress);
+    setUser({ ...user, locationPreference: selectedAddress })
+  };
 
   const requiredNames = [
-    "Communication",
-    "Teamwork",
-    "ProblemSolving",
-    "Initiative And Enterprise",
-    "Planning And Organising",
-    "Self-management",
-    "Learning",
-    "Technology",
+    "communication",
+    "teamwork",
+    "problemSolving",
+    "initiativeAndEnterprise",
+    "planningAndOrganising",
+    "self-management",
+    "learning",
+    "technology",
   ];
 
   const preferredNames = [
-    "Cloud Computing",
-    "Machine Learning",
-    "Figma",
-    "AWS",
-    "Data Analysis",
-    "Web Development",
-    "User experience (UX)",
-    "Cybersecurity Analytics",
+    "cloudComputing",
+    "machineLearning",
+    "figma",
+    "aws",
+    "dataAnalysis",
+    "webDevelopment",
+    "UserExperienceUX",
+    "cybersecurityAnalytics",
   ];
 
   const IndustryNames = [
-    "IT",
-    "Advertising and marketing",
-    "Health care",
-    "Business and finance",
-    "Retail",
-    "Food and hospitality",
-    "Education",
-    "Arts and entertainment",
+    "it",
+    "advertisingAndMarketing",
+    "healthCare",
+    "businessAndFinance",
+    "retail",
+    "foodAndHospitality",
+    "education",
+    "artsAndEntertainment",
   ];
 
   const educationNames = [
-    "High School Degree",
-    "Associate's Degree",
-    "Bachelor's Degree",
-    "Master's Degree",
-    "Doctoral Degree",
+    "highschoolDegree",
+    "associatesDegree",
+    "bachelorsDegree",
+    "mastersDegree",
+    "doctoralDegree",
   ];
 
 
@@ -81,7 +102,7 @@ const Form = ({ close }) => {
             PK: `ACC#${id}`,
             SK: `CAND#${id}`,
             currentTitle: currentTitle,
-            locationPreference: locationPreference,
+            locationPreference: address,
             yearsOfExperience: yearsOfExperience,
             seniorityLevel: seniorityLevel,
             requiredSkills: requiredSkills,
@@ -103,20 +124,19 @@ const Form = ({ close }) => {
 
 
 
-
   return (
     <Card sx={{ height: 1000, ml: 4 }}>
       <Grid xs={8}>
         <IconButton onClick={() => close(false)}><CloseIcon /></IconButton>
       </Grid>
 
-      <Grid container xs={12} sx={{ height: 20, mt: 5, alignItems: 'center', justifyContent: 'center' }}>
+      <Grid container sx={{ height: 20, mt: 5, alignItems: 'center', justifyContent: 'center' }}>
         <Typography variant='h6'>What's your ideal candidate profile for this position?</Typography>
         <Grid item xs={12} sx={{ m: 6, alignItems: 'center', justifyContent: 'center' }}>
           <Typography lineHeight={2} variant='body2'>On-demand sourcing is a fast and effective way to fill your recruitment pipeline with quality candidates. You will specify the ideal candidate profile for each sourcing request and get 50 matching prospects within 1-2 business days.</Typography>
         </Grid>
 
-        <Grid container xs={12} sx={{ m: 2 }}>
+        <Grid container sx={{ m: 2 }}>
           <Grid item xs={10} md={5} sx={{ m: 4, ml: 10 }}>
             <TextField
               required
@@ -128,15 +148,38 @@ const Form = ({ close }) => {
               onChange={(e) => handleChange(e)} />
           </Grid>
           <Grid item xs={10} md={5} sx={{ m: 4, ml: 10 }}>
-            <TextField
-              required
-              label="Location Preference"
-              variant="standard"
-              value={locationPreference}
-              name="locationPreference"
-              onChange={(e) => handleChange(e)}
-              fullWidth
-            />
+            <PlacesAutocomplete
+              value={address}
+              onChange={setAddress}
+              onSelect={handleSelect}
+              searchOptions={{ types: ["(cities)"], componentRestrictions: { country: "us" }, language: "en", }}
+            >
+              {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                <div>
+                  <TextField
+                    label="Location Preference"
+                    variant="standard"
+                    value={address}
+                    name="locationPreference"
+                    fullWidth
+                    {...getInputProps({ placeholder: "Enter location" })} />
+                  <div>
+                    {loading ? <div>Loading...</div> : null}
+                    {suggestions.map((suggestion, idx) => {
+                      const style = {
+                        backgroundColor: suggestion.active ? "#e8e8e8" : "#fff",
+                      };
+
+                      return (
+                        <div key={idx} {...getSuggestionItemProps(suggestion, { style })}>
+                          {suggestion.description}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </PlacesAutocomplete>
           </Grid>
 
           <Grid item xs={10} md={5} sx={{ m: 4, ml: 10 }}>

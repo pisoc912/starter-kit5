@@ -3,7 +3,7 @@ import { Avatar, Button, Card, CardContent, Link, ListItem, ListItemAvatar, List
 import React, { useState } from 'react'
 import TalentDialog from './TalentDialog'
 
-const TalentSource = ({ results }) => {
+const TalentSource = ({ results, isSearching }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState([]);
 
@@ -15,6 +15,10 @@ const TalentSource = ({ results }) => {
 
   const handleClose = () => {
     setIsDialogOpen(false);
+  }
+
+  if (isSearching) {
+    return <p>Loading...</p>;
   }
 
   return (

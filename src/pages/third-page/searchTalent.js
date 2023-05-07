@@ -1,7 +1,7 @@
 import { Button, TextField } from '@mui/material'
 import React from 'react'
 
-const SearchTalent = ({ handleChange }) => {
+const SearchTalent = ({ handleChange, search }) => {
   return (
     <div>
       <TextField
@@ -10,7 +10,7 @@ const SearchTalent = ({ handleChange }) => {
         onChange={handleChange}
         placeholder="search..."
       />
-      <Button>Search</Button>
+      <Button onClick={search}>Search</Button>
     </div>
   )
 }

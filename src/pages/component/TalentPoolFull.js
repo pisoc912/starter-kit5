@@ -11,9 +11,13 @@ import DraftsIcon from '@mui/icons-material/Drafts';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import AWS from 'aws-sdk';
+import OrderDetail from '../second-page/Orders'
+import CandidatesFull from './CandidatesFull'
+import Candidates from './Candidates'
+import Orders from '../second-page/Orders'
 
 const TalentPoolFull = (props) => {
-  const { csvData, filteredData } = props
+  const { orderData } = props
   const [active, setActive] = useState("")
   const [search, setSearch] = useState("")
 
@@ -91,7 +95,7 @@ const TalentPoolFull = (props) => {
             <Divider />
 
             <List sx={{ p: 3 }}>
-              <ListItemButton>
+              <ListItemButton onClick={() => setActive("Active")}>
                 <ListItemIcon>
                   <EmailIcon />
                 </ListItemIcon>
@@ -122,7 +126,8 @@ const TalentPoolFull = (props) => {
       </Grid>
       <Grid item xs={8}>
         {active === "NewOrder" && <Form close={setActive} />}
-        {!active && <TalentPool search={search} setSearch={setSearch} />}
+        {active === "Active" && <Orders close={setActive} data={orderData} />}
+        {!active && <Candidates />}
       </Grid>
     </Grid>
   )

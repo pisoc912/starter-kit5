@@ -8,71 +8,31 @@ import { useState, useEffect } from 'react'
 import CandidatesFull from '../component/CandidatesFull'
 import Header from '../component/Header'
 import TalentPoolFull from '../component/TalentPoolFull'
-import { Storage } from 'aws-amplify'
+import { API, graphqlOperation, Storage } from 'aws-amplify'
 
 import useSearch from 'src/@core/hooks/useSearch'
+import { listCandidateListings } from 'src/graphql/queries'
 
 
 
 const Home = () => {
   const [active, setActive] = useState("TalentPool")
-  const [csvData, setCsvData] = useState([])
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(50);
-  const [filteredData, handleSearch] = useSearch(csvData);
+  const [orderData, setOrderData] = useState([])
 
 
   useEffect(() => {
-    getCsvData();
+    fetchData();
   }, []);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-
-
-  const getCsvData = async () => {
+  const fetchData = async () => {
     try {
-      Storage.configure({ region: 'us-west-1' })
-      const listResponse = await Storage.list('talentsource/')
-
-      const fileKey = listResponse.results[1].key
-
-
-      const file = await Storage.get(fileKey, {
-        level: 'public',
-        contentType: 'text/csv'
-      })
-      const response = await fetch(file)
-      const text = await response.text()
-
-      const rows = text.split('\n')
-
-      const headers = rows[0].split(',')
-
-      const csvData = rows.slice(1).map(row => {
-        const values = row.split(',');
-        const obj = {};
-
-        values.forEach((value, index) => {
-          value = value.replace(/"/g, "").trim();
-          obj[headers[index]] = value;
-        });
-
-        return obj;
-      });
-
-      setCsvData(csvData);
+      const response = await API.graphql(graphqlOperation(listCandidateListings));
+      console.log(response)
+      setOrderData(response.data.listCandidateListings.items);
     } catch (error) {
-      console.error(error)
+      console.error('Error fetching data:', error);
     }
-  }
+  };
 
   return (
     <Grid container spacing={6}>
@@ -95,7 +55,7 @@ const Home = () => {
       <Divider />
 
       <Grid container>
-        {active === "TalentPool" && <TalentPoolFull csvData={csvData} filteredData={filteredData} />}
+        {active === "TalentPool" && <TalentPoolFull orderData={orderData} />}
         {active === "Candidates" && <CandidatesFull />}
 
       </Grid>

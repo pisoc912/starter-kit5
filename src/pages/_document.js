@@ -23,6 +23,10 @@ class CustomDocument extends Document {
           />
           <link rel='apple-touch-icon' sizes='180x180' href='/images/apple-touch-icon.png' />
           <link rel='shortcut icon' href='/images/favicon.png' />
+          <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDC6i780VSknPZYxZUF4zXQIEINVf7_GI&libraries=places&callback=initMap"
+            defer
+          ></script>
         </Head>
         <body>
           <Main />
@@ -39,12 +43,12 @@ CustomDocument.getInitialProps = async ctx => {
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: App => props =>
-        (
-          <App
-            {...props} // @ts-ignore
-            emotionCache={cache}
-          />
-        )
+      (
+        <App
+          {...props} // @ts-ignore
+          emotionCache={cache}
+        />
+      )
     })
   const initialProps = await Document.getInitialProps(ctx)
   const emotionStyles = extractCriticalToChunks(initialProps.html)
