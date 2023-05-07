@@ -1,49 +1,47 @@
-import { Box, Button, Card, Grid, List, ListItem, ListItemText, Typography, MenuItem, Divider, Hidden, Drawer, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material'
+import { Box, Button, Card, Grid, List, ListItem, ListItemText, Typography, MenuItem, Divider, Hidden, Drawer, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Accordion, AccordionSummary, AccordionDetails, Chip } from '@mui/material'
 import React from 'react'
 import { useState } from 'react'
 import Candidates from './Candidates'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import themeConfig from 'src/configs/themeConfig'
+import { styled, useTheme } from '@mui/material/styles'
 
-const CandidatesFull = () => {
-  const [open, setOpen] = useState(false);
+const CandidatesFull = ({ orderData }) => {
+  const theme = useTheme();
+  const [selectedData, setSelectedData] = useState([])
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClick = (data) => {
+    setSelectedData([data])
+    console.log("clicked", data)
+  }
 
   return (
-    <Grid container spacing={6} xs={12}>
+    <Grid container spacing={6}>
       <Hidden mdDown>
-        <Grid item xs={3}>
-          <Card sx={{ p: 8, height: "100%", mt: 4 }}>
-            <Button fullWidth sx={{ height: 70, mt: 5 }} variant='contained' onClick={handleClickOpen}>
-              View Order Details
-            </Button>
-            <Dialog open={open} onClose={handleClose}>
-              <DialogTitle>Subscribe</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  To subscribe to this website, please enter your email address here. We
-                  will send updates occasionally.
-                </DialogContentText>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="Email Address"
-                  type="email"
-                  fullWidth
-                  variant="standard"
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleClose}>Subscribe</Button>
-              </DialogActions>
-            </Dialog>
+        <Grid item xs={3} >
+          <Card>
+            <Accordion sx={{ backgroundColor: `rgba(${theme.palette.customColors.main}, 0.06)` }}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <Typography variant='h6' sx={{ color: theme.palette.primary.main, m: 3 }}>View Order Details</Typography>
+              </AccordionSummary>
+              <AccordionDetails >
+                {orderData.map((data, idx1) => {
+                  return (
+                    <Chip key={idx1}
+                      size='medium'
+                      label={data.PK}
+                      color={'primary'}
+                      sx={{ my: 1.5, '& .MuiChip-label': { px: 2.5, lineHeight: 1.385, textTransform: 'capitalize' } }}
+                      onClick={() => handleClick(data)}
+                    />
+                  )
+                })}
+              </AccordionDetails>
+            </Accordion>
             <Box sx={{ m: 2, mt: 6, overflowY: 'hidden' }}>
               <List component='div'>
                 <ListItemText>Sort</ListItemText>
@@ -53,20 +51,11 @@ const CandidatesFull = () => {
               <Button fullWidth sx={{ textAlign: 'start', justifyContent: 'flex-start' }}>Experience</Button>
 
             </Box>
-            <Box sx={{ m: 2, mt: 8, mb: 10, overflowY: 'hidden' }}>
-              <List component='div'>
-                <ListItemText>Sort</ListItemText>
-              </List>
-              <Button fullWidth sx={{ textAlign: 'start', justifyContent: 'flex-start' }}>Score</Button>
-              <Divider />
-              <Button fullWidth sx={{ textAlign: 'start', justifyContent: 'flex-start' }}>Experience</Button>
-
-            </Box>
           </Card>
         </Grid>
       </Hidden>
       <Grid item xs={12} md={9}>
-        <Candidates />
+        <Candidates data={selectedData} />
       </Grid>
     </Grid>
   )

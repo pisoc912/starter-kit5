@@ -21,47 +21,6 @@ const TalentPoolFull = (props) => {
   const [active, setActive] = useState("")
   const [search, setSearch] = useState("")
 
-  // console.log(JSON.stringify(csvData[0]))
-  // console.log(csvData.filter(data => data.talent_first_name === "Web"))
-  AWS.config.update({
-    region: 'us-east-1'
-  });
-
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Assume IAM role in another AWS account
-        const sts = new AWS.STS();
-
-        const assumeRoleParams = {
-          RoleArn: 'arn:aws:iam::851565480501:role/talentsourcingLambdaRole59acd701-dev',
-          RoleSessionName: '/',
-          DurationSeconds: 900
-        };
-        const assumeRoleResult = await sts.assumeRole(assumeRoleParams).promise();
-
-        // Use temporary credentials to call your Lambda function
-        const lambda = new AWS.Lambda({
-          region: 'us-east-1',
-          credentials: assumeRoleResult.Credentials
-        });
-
-        const response = await lambda.invoke({
-          FunctionName: 'talent-sourcing-rds',
-          Payload: JSON.stringify({})
-        }).promise();
-
-        const result = JSON.parse(response.Payload);
-        setData(result);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
-  }, []);
-
 
   return (
     <Grid container>

@@ -1,5 +1,6 @@
 import { CloseOutlined } from '@mui/icons-material'
 import { Button, Card, CardContent, Grid, IconButton, Link, ListItem, ListItemText, Typography } from '@mui/material'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import CandidatesFull from '../component/CandidatesFull'
 import CandidateListAfterSubmit from './CandidateListAfterSubmit'
@@ -9,6 +10,7 @@ const Orders = ({ close, data, canData, getCandidateData }) => {
   const [active, setActive] = useState([])
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState([]);
+  const router = useRouter();
 
   const handleCardClick = (data) => {
     setDialogData([data]);
@@ -20,6 +22,10 @@ const Orders = ({ close, data, canData, getCandidateData }) => {
     setIsDialogOpen(false);
   }
 
+  const handleClick = () => {
+    router.push('/home/test');
+  };
+
 
   return (
     <div>
@@ -30,7 +36,7 @@ const Orders = ({ close, data, canData, getCandidateData }) => {
             <ListItemText secondary="Order Date" primary={order.createdAt.substring(5, 10)} />
             <ListItemText secondary="Title" primary={order.currentTitle} />
             <Button onClick={() => handleCardClick(order)}>Order Detail</Button>
-            <Button onClick={() => setActive("Candidates")}>Check Candidates List</Button>
+            <Button onClick={() => handleClick()}>Check Candidates List</Button>
           </ListItem>
 
 
@@ -38,7 +44,7 @@ const Orders = ({ close, data, canData, getCandidateData }) => {
       )}
 
       <OrderDetail orderData={dialogData} open={isDialogOpen} onClose={handleClose} />
-      {active == "Candidates" && <CandidatesFull canData={canData} getCandidateData={getCandidateData} />}
+      {active === "Candidates" && <CandidatesFull orderData={dialogData} />}
 
     </div>
   )

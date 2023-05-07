@@ -4,11 +4,31 @@ const navigation = () => {
       title: 'Home',
       path: '/home',
       icon: 'mdi:home-outline',
+      children: [
+        {
+          title: 'Test',
+          path: '/home/test',
+        }]
     },
     {
       title: 'Second Page',
       path: '/second-page',
       icon: 'mdi:email-outline',
+      children: [
+        {
+          title: 'Talent Pool',
+          path: '/second-page/talentpool',
+        },
+        {
+          title: 'Candidates',
+          path: '/second-page/candidates',
+        },
+        {
+          title: 'Details',
+          path: '/second-page/details',
+        },
+      ]
+
     }, {
       title: 'Third Page',
       path: '/third-page',

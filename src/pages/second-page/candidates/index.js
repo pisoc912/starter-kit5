@@ -5,9 +5,9 @@ import Grid from '@mui/material/Grid'
 
 
 import { useState, useEffect } from 'react'
-import CandidatesFull from '../component/CandidatesFull'
-import Header from '../component/Header'
-import TalentPoolFull from '../component/TalentPoolFull'
+import CandidatesFull from '../../component/CandidatesFull'
+import Header from '../../component/Header'
+import TalentPoolFull from '../../component/TalentPoolFull'
 import { API, graphqlOperation, Storage } from 'aws-amplify'
 
 import useSearch from 'src/@core/hooks/useSearch'
@@ -16,7 +16,7 @@ import { listCandidateListings } from 'src/graphql/queries'
 
 
 const Home = () => {
-  const [active, setActive] = useState("TalentPool")
+  const [active, setActive] = useState("Candidates")
   const [orderData, setOrderData] = useState([])
 
 
@@ -56,7 +56,7 @@ const Home = () => {
 
       <Grid container>
         {active === "TalentPool" && <TalentPoolFull orderData={orderData} />}
-        {active === "Candidates" && <CandidatesFull />}
+        {active === "Candidates" && <CandidatesFull orderData={orderData} />}
 
       </Grid>
 

@@ -23,9 +23,9 @@ const TalentSource = ({ results, isSearching }) => {
 
   return (
     <div>
-      {results?.map((result, idx) => {
+      {results?.map((result, idx0) => {
         return (
-          <div key={idx}>
+          <div key={idx0}>
             <Card sx={{ minHeight: 100, mb: 2, display: 'flex' }} onClick={() => handleCardClick(result)}>
               <ListItem direction='row' alignItems='center' justifyContent='center' sx={{ width: '30%' }}>
                 <ListItemAvatar>
