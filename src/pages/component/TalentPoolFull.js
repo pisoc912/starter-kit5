@@ -16,6 +16,7 @@ import CandidatesFull from './CandidatesFull'
 import Candidates from './Candidates'
 import Orders from '../second-page/Orders'
 
+
 const TalentPoolFull = (props) => {
   const { orderData } = props
   const [active, setActive] = useState("")
@@ -86,7 +87,7 @@ const TalentPoolFull = (props) => {
       <Grid item xs={8}>
         {active === "NewOrder" && <Form close={setActive} />}
         {active === "Active" && <Orders close={setActive} data={orderData} />}
-        {!active && <Candidates />}
+        {!active && <Orders close={setActive} data={orderData} />}
       </Grid>
     </Grid>
   )

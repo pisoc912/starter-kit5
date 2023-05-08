@@ -10,8 +10,8 @@ import axios from 'axios'
 // ** Config
 import authConfig from 'src/configs/auth'
 
-import { Auth, API, syncExpression, Hub } from 'aws-amplify'
-import { DataStore, Predicates } from '@aws-amplify/datastore'
+import { Auth, API } from 'aws-amplify'
+import { DataStore } from '@aws-amplify/datastore'
 import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth'
 
 import * as queries from '/src/graphql/queries.js'
@@ -234,22 +234,22 @@ const AuthProvider = ({ children }) => {
     }
   }
 
-  const refreshStripe = async (refresh = true) => {
-    console.log(window.location.href)
-    const userData = await Auth.currentAuthenticatedUser()
+  // const refreshStripe = async (refresh = true) => {
+  //   console.log(window.location.href)
+  //   const userData = await Auth.currentAuthenticatedUser()
 
-    let result = await API.graphql({
-      query: queries.getStripeProfile,
-      variables: { id: userData.attributes.sub }
-    })
+  //   let result = await API.graphql({
+  //     query: queries.getStripeProfile,
+  //     variables: { id: userData.attributes.sub }
+  //   })
 
-    let stripe_ = result.data.getStripeProfile
-    console.log(stripe_)
+  //   let stripe_ = result.data.getStripeProfile
+  //   console.log(stripe_)
 
-    setStripe(stripe_)
+  //   setStripe(stripe_)
 
-    return stripe_
-  }
+  //   return stripe_
+  // }
 
   const refreshUser = async user_ => {
     const userData = await Auth.currentAuthenticatedUser()
@@ -296,7 +296,8 @@ const AuthProvider = ({ children }) => {
         confirmRegistration: handleConfirmation,
         stripe,
         setStripe,
-        refreshStripe: refreshStripe,
+
+        // refreshStripe: refreshStripe,
         aiPreset,
         setAIPreset,
         loginWithGoogle

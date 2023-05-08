@@ -56,7 +56,7 @@ const Home = () => {
 
       <Grid container>
         {active === "TalentPool" && <TalentPoolFull orderData={orderData} />}
-        {active === "Candidates" && <CandidatesFull />}
+        {active === "Candidates" && <CandidatesFull orderData={orderData} />}
 
       </Grid>
 

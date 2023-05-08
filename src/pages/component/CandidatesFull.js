@@ -9,34 +9,57 @@ import { styled, useTheme } from '@mui/material/styles'
 const CandidatesFull = ({ orderData }) => {
   const theme = useTheme();
   const [selectedData, setSelectedData] = useState([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [selectedPK, setSelectedPK] = useState('');
 
-  const handleClick = (data) => {
-    setSelectedData([data])
-    console.log("clicked", data)
-  }
+
+
+  const handleClick = async (PK, SK) => {
+    setIsSearching(true);
+    if (selectedPK === PK) {
+      setSelectedPK('');
+    } else {
+      setSelectedPK(PK);
+    }
+
+    const requestOptions = {
+      method: 'GET'
+    };
+
+    try {
+      const response = await fetch(`https://a2mwnnax40.execute-api.us-west-1.amazonaws.com/test/candidate?pk=${encodeURIComponent(PK)}&sk=${encodeURIComponent(SK)}`, requestOptions);
+      const data = await response.json();
+      console.log(data.hits.hits)
+      setSelectedData(data.hits.hits);
+      setIsSearching(false);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      setIsSearching(false);
+    }
+  };
+
+
 
   return (
     <Grid container spacing={6}>
       <Hidden mdDown>
         <Grid item xs={3} >
           <Card>
-            <Accordion sx={{ backgroundColor: `rgba(${theme.palette.customColors.main}, 0.06)` }}>
+            <Accordion defaultExpanded sx={{ backgroundColor: `rgba(${theme.palette.customColors.main}, 0.06)` }}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
               >
                 <Typography variant='h6' sx={{ color: theme.palette.primary.main, m: 3 }}>View Order Details</Typography>
               </AccordionSummary>
-              <AccordionDetails >
+              <AccordionDetails defaultExpanded>
                 {orderData.map((data, idx1) => {
                   return (
                     <Chip key={idx1}
                       size='medium'
-                      label={data.PK}
-                      color={'primary'}
-                      sx={{ my: 1.5, '& .MuiChip-label': { px: 2.5, lineHeight: 1.385, textTransform: 'capitalize' } }}
-                      onClick={() => handleClick(data)}
+                      label={`No. ${data.PK.substring(4, 12)} ${data.industry}`}
+                      color={selectedPK == data.PK ? 'success' : 'primary'}
+                      sx={{ my: 1.5, lineHeight: 3, textTransform: 'capitalize' }}
+                      onClick={() => handleClick(data.PK, data.SK)}
                     />
                   )
                 })}
@@ -55,7 +78,7 @@ const CandidatesFull = ({ orderData }) => {
         </Grid>
       </Hidden>
       <Grid item xs={12} md={9}>
-        <Candidates data={selectedData} />
+        <Candidates data={selectedData} isSearching={isSearching} />
       </Grid>
     </Grid>
   )

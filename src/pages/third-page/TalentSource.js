@@ -29,7 +29,7 @@ const TalentSource = ({ results, isSearching }) => {
             <Card sx={{ minHeight: 100, mb: 2, display: 'flex' }} onClick={() => handleCardClick(result)}>
               <ListItem direction='row' alignItems='center' justifyContent='center' sx={{ width: '30%' }}>
                 <ListItemAvatar>
-                  <Avatar alt={result._source.person_name} src='/images/avatar/1.png' />
+                  <Avatar alt={result._source.person_name} />
                 </ListItemAvatar>
                 <ListItemText
                   primary={result._source.person_name}
