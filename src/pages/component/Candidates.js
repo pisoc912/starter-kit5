@@ -8,7 +8,7 @@ import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import PopUpProfile from './PopUpProfile';
 import PropTypes from 'prop-types';
 import useSearch from 'src/@core/hooks/useSearch';
-import { AddLocation, LinkedIn } from '@mui/icons-material';
+import { AddLocation, CheckBox, LinkedIn } from '@mui/icons-material';
 import clsx from 'clsx';
 import TalentDialog from '../third-page/TalentDialog';
 
@@ -19,13 +19,41 @@ const Candidates = ({ data, isSearching }) => {
   const itemsPerPage = 10;
   const [checked, setChecked] = useState([]);
 
+  // const handleChange = (id) => {
+  //   if (checked.includes(id)) {
+  //     setChecked(checked.filter((cardId) => cardId !== id));
+  //   } else {
+  //     setChecked([...checked, id]);
+  //   }
+  // };
+
+
   const handleChange = (id) => {
-    if (checked.includes(id)) {
-      setChecked(checked.filter((cardId) => cardId !== id));
+    const currentIndex = checked.indexOf(id);
+    const newChecked = [...checked];
+    if (currentIndex === -1) {
+      newChecked.push(id);
     } else {
-      setChecked([...checked, id]);
+      newChecked.splice(currentIndex, 1);
     }
+    setChecked(newChecked);
+
+    // 更新 selectedItems 数组
+    const selectedItem = currentData.find((data) => data._id === id);
+    console.log(selectedItem)
+
+    const newSelectedItems = newChecked.map((id) =>
+      currentData.find((data) => data._id === id)
+    );
+    setSelectedItems(newSelectedItems);
   };
+
+  const handleShowSelectedItems = () => {
+    const content = selectedItems.map((item) => item._source.person_name).join(', ');
+    console.log(content)
+    alert(`Selected items: ${content}`);
+  };
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -37,6 +65,9 @@ const Candidates = ({ data, isSearching }) => {
   console.log(currentData)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState([]);
+  const [isCheckedAll, setIsCheckedAll] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+
 
   const handleCardClick = (data) => {
     setDialogData([data]);
@@ -50,6 +81,19 @@ const Candidates = ({ data, isSearching }) => {
   if (isSearching) {
     return <p>Loading...</p>;
   }
+
+  const handleChangeAll = () => {
+    if (isCheckedAll) {
+      setChecked([]);
+      setIsCheckedAll(false);
+    } else {
+      const allIds = currentData.map((data) => data._id);
+      setChecked(allIds);
+      setIsCheckedAll(true);
+    }
+  };
+
+
 
 
   return (
@@ -69,21 +113,29 @@ const Candidates = ({ data, isSearching }) => {
             Industry
           </Grid>
         </Grid>
+        <Stack direction="row" alignItems="center">
+          <Checkbox
+            checked={isCheckedAll}
+            onChange={handleChangeAll}
+          />
+          <Button onClick={handleShowSelectedItems}>Confirm</Button>
+        </Stack>
         <Grid item xs={12}>
           {currentData.map((data, idx2) => (
-            <Card key={idx2} sx={{ m: 4, height: 80 }} onClick={() => handleCardClick(data)}>
+            <Card key={idx2} sx={{ m: 4, height: 80 }} >
               <Grid container sx={{ justifyContent: 'center', alignItems: 'center' }} >
                 <Grid item xs={4} >
-                  <ListItem direction="row" alignItems="flex-start" justifyContent="center">
+                  <ListItem direction="row" alignItems="center" justifyContent="center">
                     <Checkbox
                       checked={checked.includes(data._id)}
                       onChange={() => handleChange(data._id)}
+                      sx={{ display: 'flex', alignItems: 'center' }}
                     />
                     <ListItemAvatar>
                       <Avatar alt={data.PK} />
                     </ListItemAvatar>
 
-                    <ListItemText
+                    <ListItemText onClick={() => handleCardClick(data)}
                       primary={data._source.person_name}
 
                       secondary={

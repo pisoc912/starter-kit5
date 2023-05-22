@@ -24,8 +24,8 @@ const navigation = () => {
           path: '/second-page/candidates',
         },
         {
-          title: 'Details',
-          path: '/second-page/details',
+          title: 'Chat with AI',
+          path: '/second-page/chatAI',
         },
       ]
 

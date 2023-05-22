@@ -87,8 +87,9 @@ const TalentDialog = ({ open, onClose, results }) => {
                   </ListItem>
                   <ListItem>
                     <ListItemText
-                      primary="Notes: "
-                      secondary="good"
+                      primary="Company Keywords"
+                      secondary={data._source.company_keywords.map(keyword => (
+                        <span key={keyword}>{keyword}<br /></span>))}
                     />
 
                   </ListItem>

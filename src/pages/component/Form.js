@@ -38,7 +38,7 @@ const Form = ({ close }) => {
     setCity(city);
     setState(state);
     setAddress(selectedAddress);
-    setUser({ ...user, locationPreference: selectedAddress })
+    setUser({ ...user, locationPreference: locationPreference })
   };
 
   const requiredNames = [
@@ -148,6 +148,14 @@ const Form = ({ close }) => {
               onChange={(e) => handleChange(e)} />
           </Grid>
           <Grid item xs={10} md={5} sx={{ m: 4, ml: 10 }}>
+            {/* <TextField
+              label="Location Preference"
+              variant="standard"
+              value={locationPreference}
+              name="locationPreference"
+              fullWidth
+              onChange={(e) => handleChange(e)}
+            /> */}
             <PlacesAutocomplete
               value={address}
               onChange={setAddress}

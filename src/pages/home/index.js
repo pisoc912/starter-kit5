@@ -17,29 +17,9 @@ const Home = () => {
 
   return (
     <Grid container spacing={6}>
-      {/* <Header />
 
-      <Grid item xs={12}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'start',
-          mb: 6
-        }}
-      >
-        <ButtonGroup variant="text" aria-label="text button group">
-          <Button onClick={() => setActive("TalentPool")}>Talent Pool</Button>
-          <Button onClick={() => setActive("Candidates")}>Candidates</Button>
-          <Button onClick={() => setActive("Details")}>Details</Button>
-        </ButtonGroup>
-      </Grid>
-      <Divider /> */}
       <Payment />
-      {/* <Grid container>
-        {active === "TalentPool" && <TalentPoolFull />}
-        {active === "Candidates" && <CandidatesFull />}
 
-      </Grid> */}
 
     </Grid>
   )

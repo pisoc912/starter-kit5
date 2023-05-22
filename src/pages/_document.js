@@ -23,10 +23,9 @@ class CustomDocument extends Document {
           />
           <link rel='apple-touch-icon' sizes='180x180' href='/images/apple-touch-icon.png' />
           <link rel='shortcut icon' href='/images/favicon.png' />
-          <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDC6i780VSknPZYxZUF4zXQIEINVf7_GI&libraries=places&callback=initMap"
-            defer
-          ></script>
+          <script async
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDC6i780VSknPZYxZUF4zXQIEINVf7_GI&libraries=places&callback=initMap">
+          </script>
         </Head>
         <body>
           <Main />
