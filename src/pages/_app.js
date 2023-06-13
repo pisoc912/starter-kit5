@@ -56,9 +56,13 @@ import 'src/iconify-bundle/icons-bundle-react'
 
 // ** Global css styles
 import '../../styles/globals.css'
+
 import { Amplify } from 'aws-amplify'
 import config from '../aws-exports'
 
+// import { Amplify } from 'aws-sdk'
+
+// Amplify.configure(config)
 Amplify.configure(config)
 
 const clientSideEmotionCache = createEmotionCache()
