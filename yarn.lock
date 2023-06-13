@@ -3798,10 +3798,10 @@
     "@aws-amplify/storage" "5.1.9"
     "tslib" "^2.0.0"
 
-"aws-sdk@^2.1350.0":
-  "integrity" "sha512-b0BHug2iCtIsKgstj3FEyZYZCv8RZnie5vUQzkw0rr581Z6DOcJof7gGn19E6mPQp1l4j0d274SjvdFQS4JCMw=="
-  "resolved" "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1350.0.tgz"
-  "version" "2.1350.0"
+"aws-sdk@^2.1396.0":
+  "integrity" "sha512-5tAzB4pO9mfwb4XbDIv7wj4IsxaLI+KEAUZ8CR80sh2OdsP9AVGtMGH61dH6DQbHxCiwtLyQuoy7gZEuXv2ldQ=="
+  "resolved" "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1396.0.tgz"
+  "version" "2.1396.0"
   dependencies:
     "buffer" "4.9.2"
     "events" "1.1.1"
@@ -3812,7 +3812,7 @@
     "url" "0.10.3"
     "util" "^0.12.4"
     "uuid" "8.0.0"
-    "xml2js" "0.4.19"
+    "xml2js" "0.5.0"
 
 "axe-core@^4.4.3":
   "integrity" "sha512-1exVbW0X1O/HSr/WMwnaweyqcWOgZgLiVxdLG34pvSQk4NlYQr9OUy0JLwuhFfuVNQzzqgH57eYzkFBCb3bIsQ=="
@@ -7986,18 +7986,18 @@
   "resolved" "https://registry.npmjs.org/ws/-/ws-8.11.0.tgz"
   "version" "8.11.0"
 
-"xml2js@0.4.19":
-  "integrity" "sha512-esZnJZJOiJR9wWKMyuvSE1y6Dq5LCuJanqhxslH2bxM6duahNZ+HMpCLhBQGZkbX6xRf8x1Y2eJlgt2q3qo49Q=="
-  "resolved" "https://registry.npmjs.org/xml2js/-/xml2js-0.4.19.tgz"
-  "version" "0.4.19"
+"xml2js@0.5.0":
+  "integrity" "sha512-drPFnkQJik/O+uPKpqSgr22mpuFHqKdbS835iAQrUC73L2F5WkboIRd63ai/2Yg6I1jzifPFKH2NTK+cfglkIA=="
+  "resolved" "https://registry.npmjs.org/xml2js/-/xml2js-0.5.0.tgz"
+  "version" "0.5.0"
   dependencies:
     "sax" ">=0.6.0"
-    "xmlbuilder" "~9.0.1"
+    "xmlbuilder" "~11.0.0"
 
-"xmlbuilder@~9.0.1":
-  "integrity" "sha512-7YXTQc3P2l9+0rjaUbLwMKRhtmwg1M1eDf6nag7urC7pIPYLD9W/jmzQ4ptRSUbodw5S0jfoGTflLemQibSpeQ=="
-  "resolved" "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-9.0.7.tgz"
-  "version" "9.0.7"
+"xmlbuilder@~11.0.0":
+  "integrity" "sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA=="
+  "resolved" "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-11.0.1.tgz"
+  "version" "11.0.1"
 
 "xtend@~2.1.1":
   "integrity" "sha512-vMNKzr2rHP9Dp/e1NQFnLQlwlhp9L/LfvnsVdHxN1f+uggyVI3i08uD14GPvCToPkdsRfyPqIyYGmIk58V98ZQ=="
