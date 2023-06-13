@@ -4,7 +4,7 @@ import React from 'react'
 
 const ChatMessages = ({ messages = [] }) => {
   return (
-    <Box sx={{ height: "90%" }}>
+    <Box sx={{ height: "75%" }}>
       {messages.map((message, id) => {
         return (
           <div key={id} style={{ backgroundColor: message.sender === 'User' ? 'white' : '#ede7f6', color: message.sender === 'User' ? 'primary' : '#787EFF' }}>

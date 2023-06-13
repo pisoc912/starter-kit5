@@ -1,48 +1,67 @@
 import { Fullscreen } from '@mui/icons-material'
-import { Card } from '@mui/material'
+import { Box, Button, Card, CardContent, CardHeader, Grid, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import ChatInput from '../ChatInput'
-import ChatMessages from '../ChatMessages'
+import Chat from '../Chat'
+
+const roles = [
+  'Business Intelligence Analyst',
+  'Data Analyst',
+  'Compliance Analyst',
+  'Customer Service Representative',
+  'Help Desk Specialist',
+  'Data Scientist',
+  'Executive Assistant',
+  'Chief of Staff',
+  'Financial Analyst',
+  'Accountant',
+  'Recruitment Specialist',
+  'Systems Analyst',
+  'IT Support Specialist',
+  'Legal Assistant',
+  'Marketing Coordinator',
+  'Content Specialist',
+  'Supply Chain Specialist',
+  'Product Analyst',
+  'Project Coordinator',
+  'Business Analyst',
+  'Development Engineer',
+  'Account Executive'
+];
 
 const ChatAI = () => {
-  const [input, setInput] = useState("")
-  const [messages, setMessages] = useState([])
+  const [showChat, setShowChat] = useState(false)
+  const [role, setRole] = useState('')
 
-  const handleInputChange = (event) => {
-    setInput(event.target.value)
+
+  const handleButtonClick = (role) => {
+    setShowChat(true)
+    setRole(role)
   }
 
-  const sendMessage = async () => {
-    // 添加用户的消息到列表
-    setMessages([...messages, { sender: 'User', content: input }]);
-    console.log("message" + [...messages]);
-
-    // 发送请求到API
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt: input }),
-    });
-    const data = await res.json();
-    console.log(data);
-
-    // 添加AI的响应到消息列表
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { sender: 'AI', content: data.data },
-    ]);
-
-    // 清空输入框
-    setInput('');
-  };
-
   return (
-    <Card sx={{ bgcolor: "white", height: '100%' }}>
-      <ChatMessages messages={messages} />
-      <ChatInput value={input} onChange={handleInputChange} onSubmit={sendMessage} />
-    </Card>
+    <div style={{ height: '100%' }}>
+      {showChat ? (
+        <Chat onClose={setShowChat} role={role} />
+      ) : (
+        <Grid container spacing={3}>
+          {roles.map((role) => (
+            <Grid item xs={3} key={role}>
+              <Card sx={{ p: 4, minHeight: 200, display: 'flex', flexDirection: 'column', bgcolor: '#fafafa' }}>
+                <CardContent>
+                  <Typography variant='h5' style={{ textAlign: 'center', color: '#9155FD' }}>
+                    {role}
+                  </Typography>
+                </CardContent>
+                <Box sx={{ mt: 'auto', p: 1, display: 'flex', justifyContent: 'center' }}>
+                  <Button variant='outlined' onClick={() => handleButtonClick(role)}>Start Chat Here</Button>
+                </Box>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </div>
+
   )
 }
 

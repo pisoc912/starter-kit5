@@ -90,7 +90,7 @@ const Form = ({ close }) => {
 
 
   const handleAdd = async () => {
-    if (!currentTitle || !locationPreference || !yearsOfExperience) {
+    if (!currentTitle || !yearsOfExperience) {
       setError("Please input all required fields!");
     } else {
       console.log(await Auth.currentUserInfo())
