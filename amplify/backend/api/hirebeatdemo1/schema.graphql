@@ -60,11 +60,10 @@ enum RequiredSkillType {
 }
 
 enum PreferredSkillType {
-  cloud
-  Computing
+  cloudComputing
   machineLearning
   figma
-  aws
+  AWS
   dataAnalysis
   webDevelopment
   userExperienceUx

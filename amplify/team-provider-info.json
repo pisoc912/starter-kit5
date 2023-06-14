@@ -17,6 +17,12 @@
       },
       "api": {
         "hirebeatdemo1": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d3dbc5tz1c3ryu",
+          "type": "manual"
+        }
       }
     }
   }

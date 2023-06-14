@@ -1,4 +1,4 @@
-import { Fullscreen } from '@mui/icons-material'
+
 import { Box, Button, Card, CardContent, CardHeader, Grid, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import Chat from '../Chat'

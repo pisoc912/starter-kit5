@@ -5,9 +5,9 @@ import Grid from '@mui/material/Grid'
 
 
 import { useState, useEffect } from 'react'
-import CandidatesFull from '../../component/CandidatesFull'
-import Header from '../../component/Header'
-import TalentPoolFull from '../../component/TalentPoolFull'
+import CandidatesFull from '../../components/CandidatesFull'
+import Header from '../../components/Header'
+import TalentPoolFull from '../../components/TalentPoolFull'
 import { API, graphqlOperation, Storage } from 'aws-amplify'
 
 import useSearch from 'src/@core/hooks/useSearch'

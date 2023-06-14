@@ -9,6 +9,7 @@ const Chat = ({ onClose, role }) => {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState("")
 
+
   const sendMessage = async () => {
     // 添加用户的消息到列表
     setMessages([...messages, { sender: 'User', content: input }]);
@@ -23,6 +24,7 @@ const Chat = ({ onClose, role }) => {
       },
       body: JSON.stringify({ prompt: input, role: role }),
     });
+    console.log(res);
     const data = await res.json();
 
     // 添加AI的响应到消息列表

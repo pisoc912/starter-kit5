@@ -53,7 +53,8 @@ const Form = ({ close }) => {
   ];
 
   const preferredNames = [
-    "cloudComputing",
+    "cloud",
+    "Computing",
     "machineLearning",
     "figma",
     "aws",

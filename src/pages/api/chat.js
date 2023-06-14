@@ -5,15 +5,20 @@ import { ChatOpenAI } from "langchain/chat_models/openai";
 import { BufferMemory, ConversationSummaryMemory } from "langchain/memory";
 import { ChatPromptTemplate, HumanMessagePromptTemplate, MessagesPlaceholder, PromptTemplate, SystemMessagePromptTemplate } from "langchain/prompts";
 import { HumanChatMessage, SystemChatMessage } from "langchain/schema";
+import { Configuration, OpenAIApi } from "openai";
+
+
 
 // pages/api/chat.js
 export default async function handler(req, res) {
+
   const prompt = req.body.prompt;
   const role = req.body.role;
   const api_key = process.env.OPENAI_API_KEY; // 从环境变量获取你的 OpenAI API 密钥
 
 
   try {
+
     // const response = await fetch(
     //   "https://api.openai.com/v1/chat/completions",
     //   {

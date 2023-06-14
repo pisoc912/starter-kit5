@@ -2,7 +2,7 @@ import { CloseOutlined } from '@mui/icons-material'
 import { Button, Card, CardContent, Grid, IconButton, Link, ListItem, ListItemText, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import CandidatesFull from '../component/CandidatesFull'
+import CandidatesFull from '../components/CandidatesFull'
 import CandidateListAfterSubmit from './CandidateListAfterSubmit'
 import OrderDetail from './OrderDetail'
 
