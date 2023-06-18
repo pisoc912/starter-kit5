@@ -1,15 +1,6 @@
 import React from 'react'
 import { Box, Button, Card, Grid, Typography, IconButton, Tooltip, ListItemAvatar, ListItem, Avatar, ListItemText, List, Tabs, Tab, Divider, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Pagination, Stack, Chip, Link, Checkbox } from '@mui/material'
 import { useState, useEffect } from 'react'
-import axios from 'axios'
-
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
-import PopUpProfile from './PopUpProfile';
-import PropTypes from 'prop-types';
-import useSearch from 'src/@core/hooks/useSearch';
-import { AddLocation, CheckBox, LinkedIn } from '@mui/icons-material';
-import clsx from 'clsx';
 import TalentDialog from '../third-page/TalentDialog';
 
 

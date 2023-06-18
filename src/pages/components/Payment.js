@@ -2,10 +2,10 @@
 import { Avatar, Box, Button, Card, CardActions, CardContent, CardHeader, Divider, Grid, List, ListItem, ListItemText, Paper, Typography } from '@mui/material'
 import Image from 'next/image'
 import React from 'react'
-import Gold from '../../../../public/images/Gold.png'
+import Gold from '../../../public/images/Gold.png'
 
-import Silver from '../../../../public/images/Silver.png'
-import Diamond from '../../../../public/images/Diamond.webp'
+import Silver from '../../../public/images/Silver.png'
+import Diamond from '../../../public/images/Diamond.webp'
 import { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 

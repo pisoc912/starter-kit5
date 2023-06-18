@@ -63,10 +63,10 @@ enum PreferredSkillType {
   cloudComputing
   machineLearning
   figma
-  AWS
+  aws
   dataAnalysis
   webDevelopment
-  userExperienceUx
+  userExperience
   cybersecurityAnalytics
 }
 

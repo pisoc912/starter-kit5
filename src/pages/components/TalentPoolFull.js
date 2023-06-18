@@ -2,7 +2,6 @@ import { Button, Card, CardContent, Divider, Fab, Grid, IconButton, List, ListIt
 
 import React from 'react'
 import { useState, useEffect } from 'react'
-import TalentPool from './TalentPool'
 import Form from './Form'
 
 import Icon from 'src/@core/components/icon'
@@ -10,10 +9,6 @@ import EmailIcon from '@mui/icons-material/Email';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
-import AWS from 'aws-sdk';
-import OrderDetail from '../second-page/Orders'
-import CandidatesFull from './CandidatesFull'
-import Candidates from './Candidates'
 import Orders from '../second-page/Orders'
 
 

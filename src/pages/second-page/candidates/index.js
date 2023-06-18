@@ -9,8 +9,6 @@ import CandidatesFull from '../../components/CandidatesFull'
 import Header from '../../components/Header'
 import TalentPoolFull from '../../components/TalentPoolFull'
 import { API, graphqlOperation, Storage } from 'aws-amplify'
-
-import useSearch from 'src/@core/hooks/useSearch'
 import { listCandidateListings } from 'src/graphql/queries'
 
 
